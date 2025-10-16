@@ -195,6 +195,7 @@ void free_gui() {
 
 int main(int argc, char *argv[]) {
     initialize_gui(WINDOW_WIDTH,WINDOW_HEIGHT);
+
     while (should_continue) {
         draw_window();
         read_input();

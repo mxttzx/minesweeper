@@ -9,6 +9,7 @@
  */
 #include <SDL.h>
 
+#define GAME_NAME "Minesweeper"
 /*
  * De hoogte en breedte van het venster (in pixels).
  * Deze dimensies zijn arbitrair gekozen. Deze dimensies hangen mogelijk af van de grootte van het speelveld.

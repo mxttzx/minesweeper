@@ -6,14 +6,17 @@
 #include "SDL_surface.h"
 #include "SDL_error.h"
 
+#include "cell.h"
+#include "../gui/GUI.h"
+
 #define IMAGE_DIR "../gui/Images/"
 
 SDL_Surface *load_image(const char *);
 
-void draw_image(SDL_Surface *, SDL_Window *, const char *, SDL_Rect *);
-void draw_grid(int *, int *);
+void draw_cell(SDL_Surface *, SDL_Window *, struct cell *);
+void draw_grid(SDL_Surface *, SDL_Window *, int, int);
 
-void destory_image();
+void destroy_cell();
 void destroy_grid();
 
 #endif
