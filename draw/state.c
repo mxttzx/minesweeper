@@ -1,6 +1,4 @@
 #include "state.h"
-#include "SDL_keycode.h"
-
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -11,37 +9,31 @@ static int is_relevant_event(SDL_Event *event) {
             (event->type == SDL_QUIT);
 }
 
-void read_input(GameState *gs) {
+void read_input(GameState *gs, InputState *input) {
     SDL_Event event;
 
-    while (1) {
-        int event_polled = SDL_PollEvent(&event);
-        if (event_polled == 0) {
-            return;
-        } else if (is_relevant_event(&event)) {
-            break;
-        }
-    }
+    while (SDL_PollEvent(&event)) {
+        if (!is_relevant_event(&event)) continue;
 
     switch (event.type) {
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_p) {
-                printf("P pressed\n");
-                gs->should_continue = 0;
-            }
-            if (event.key.keysym.sym == SDLK_RETURN) {
-                printf("Return pressed\n");
-                // Start new game here!
-            }
-            break;
+        input->keys[event.key.keysym.sym] = 1;
+        break;
+
+        case SDL_KEYUP:
+        input->keys[event.key.keysym.sym] = 0;
+        break;
+
         case SDL_QUIT:
-            gs->should_continue = 0;
-            gs->game_over = 1;
-            break;
+        input->quit = 1;
+        break;
+
         case SDL_MOUSEBUTTONDOWN:
-            gs->mouse_x = event.button.x;
-            gs->mouse_y = event.button.y;
-            break;
+        input->mouse_x = event.button.x;
+        input->mouse_y = event.button.y;
+        input->mouse_input = 1;
+        break;
+        }
     }
 }
 

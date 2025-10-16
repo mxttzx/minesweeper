@@ -5,18 +5,13 @@
 #include "SDL_rect.h"
 #include "SDL_surface.h"
 #include "SDL_error.h"
+#include <time.h>
 
-#include "cell.h"
-#include "../gui/GUI.h"
+#include "board.h"
+#include "../utils/load_asset.h"
 
-#define IMAGE_DIR "../gui/Images/"
-
-SDL_Surface *load_image(const char *);
-
-void draw_cell(SDL_Surface *, SDL_Window *, struct cell *);
-void draw_grid(SDL_Surface *, SDL_Window *, int, int);
-
-void destroy_cell();
-void destroy_grid();
+void draw_grid(SDL_Window *, int, int);
+void draw_cell(SDL_Window *, Cell *);
+void port_board_sdl(SDL_Window *, Board *);
 
 #endif
