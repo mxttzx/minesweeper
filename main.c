@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
             gs.game_over = 1;
         }
 
-        // update_game()
+        // update_game(&gs, &input, )
         // render_game()
     }
 

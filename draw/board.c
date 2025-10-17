@@ -18,6 +18,24 @@ void init_grid(Board *board)
     }
 }
 
+void calc_mines(Board *board, Cell *cell) {
+    int count = 0;
+
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (i == 0 && j == 0) continue;
+
+            int mrow = i + cell->x;
+            int mcol = j + cell->y;
+            if (mrow >= 0 && mrow < ROWS &&
+                mcol >= 0 && mcol < COLS) {
+                if (board->grid[mrow][mcol].is_mine) count++;
+            }
+        }
+    }
+    cell->neig_mines = count;
+}
+
 void place_mines(Board *board)
 {
     int placed_mines = 0;
@@ -29,6 +47,7 @@ void place_mines(Board *board)
 
         if (!board->grid[row_mine][col_mine].is_mine) {
             board->grid[row_mine][col_mine].is_mine = 1;
+            board->grid[row_mine][col_mine].asset = IMAGE_MINE;
             placed_mines++;
         }
     }
