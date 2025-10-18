@@ -5,6 +5,8 @@
 #include "draw.h"
 #include "state.h"
 
-void new_game(GameState *gs);
+Board* new_game(GameState *gs);
+void update_game(GameState *gs, InputState *input, Board *board);
+void render_game(GameState *gs, Board *board);
 
 #endif

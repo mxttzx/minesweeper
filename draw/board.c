@@ -18,22 +18,27 @@ void init_grid(Board *board)
     }
 }
 
-void calc_mines(Board *board, Cell *cell) {
-    int count = 0;
+void calc_mines(Board *board) {
+    // Can still be optimized, but good enough for now
+    for (int x = 0; x < ROWS; x++) {
+        for (int y = 0; y < COLS; y++) {
+            if (!board->grid[x][y].is_mine) continue;
 
-    for (int i = -1; i <= 1; i++) {
-        for (int j = -1; j <= 1; j++) {
-            if (i == 0 && j == 0) continue;
+            for (int dx = -1; dx <= 1; dx++){
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) continue;
 
-            int mrow = i + cell->x;
-            int mcol = j + cell->y;
-            if (mrow >= 0 && mrow < ROWS &&
-                mcol >= 0 && mcol < COLS) {
-                if (board->grid[mrow][mcol].is_mine) count++;
+                    int mrow = dx + x;
+                    int mcol = dy + y;
+                    if (mrow >= 0 && mrow < ROWS &&
+                        mcol >= 0 && mcol < COLS) {
+                        if (!board->grid[mrow][mcol].is_mine)
+                            board->grid[mrow][mcol].neig_mines++; // For each mine, we increment its neighbors
+                    };
+                }
             }
         }
     }
-    cell->neig_mines = count;
 }
 
 void place_mines(Board *board)

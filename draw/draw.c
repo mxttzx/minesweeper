@@ -7,14 +7,13 @@ void draw_cell(SDL_Window *gWindow, Cell *c)
     SDL_Surface *screen = SDL_GetWindowSurface(gWindow);
     SDL_Surface *image = _load_image(c->asset);
 
-    // Calculations on neighboring mines should be done here (?)
     SDL_Rect pos = {
         c->x * IMAGE_WIDTH,
         c->y * IMAGE_HEIGHT,
         IMAGE_WIDTH,
         IMAGE_HEIGHT
     };
-
+    
     if (image == NULL)
     {
         printf("Unable to load image %s! SDL Error: %s\n", c->asset, SDL_GetError());

@@ -6,6 +6,7 @@ void new_game(GameState *gs) {
 
     init_grid(&b);
     place_mines(&b);
+    calc_mines(&b);
 }
 
 void update_game(GameState *gs, Board *b) {

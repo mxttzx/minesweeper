@@ -19,5 +19,6 @@ typedef struct {
 
 void init_grid(Board *);
 void place_mines(Board *);
+void calc_mines(Board *);
 
 #endif
