@@ -1,15 +1,18 @@
+#include "SDL_keycode.h"
 #include "include/state.h"
 #include "include/board.h"
 #include "include/game.h"
-
+#include "include/assets.h"
 
 int main(int argc, char *argv[]) {
     GameState gs;
     InputState input;
+    Assets assets;
 
     Board *board = new_board();
 
-    init_gui(&gs, GAME_NAME, WINDOW_WIDTH, WINDOW_HEIGHT);
+    init_gui(&gs, &input, GAME_NAME, WINDOW_WIDTH, WINDOW_HEIGHT);
+    load_assets(gs.renderer, &assets);
 
     while(gs.should_continue) {
         read_input(&gs, &input);
@@ -27,10 +30,11 @@ int main(int argc, char *argv[]) {
             gs.game_over = 1;
         }
 
-        update_game(&gs, &input, board);
-        render_game(&gs, board);
+        // update_game(&gs, &input, board);
+        render_game(&gs, board, &assets);
     }
 
+    free_assets(&assets);
     free(board);
     free_gui(&gs);
     return 0;

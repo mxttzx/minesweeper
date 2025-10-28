@@ -34,7 +34,7 @@ void calc_mines(Board *board) {
                         mcol >= 0 && mcol < COLS) {
                         if (!board->grid[mrow][mcol].is_mine)
                             board->grid[mrow][mcol].neig_mines++; // For each mine, we increment its neighbors
-                    };
+                    }
                 }
             }
         }

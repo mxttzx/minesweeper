@@ -21,17 +21,23 @@ void update_game(GameState *gs, InputState *input, Board *board) {
 
 }
 
-void render_game(GameState *gs, Board *b) {
-    SDL_Surface *gScreenSurface = SDL_GetWindowSurface(gs->window);
+void render_cell(GameState *gs, Assets *assets, Cell *cell) {
+    SDL_Texture *text = NULL;
 
-    SDL_SetRenderDrawColor(gs->renderer, 255, 255, 255, 255);
+    if (cell->is_flag) text = assets->flagged;
+    else if (cell->is_mine) text = assets->mine;
+    else if (!cell->is_seen) text = assets->covered;
+    else text = assets->numbers[cell->neig_mines];
+
+    SDL_Rect dest = { cell->x * 50, cell->y * 50, 50, 50 };
+    SDL_RenderCopy(gs->renderer, text, NULL, &dest);
+}
+
+void render_game(GameState *gs, Board *board, Assets *assets) {
     SDL_RenderClear(gs->renderer);
-
-    for (int i = 0; i < b->rows; i++) {
-        for (int j = 0; i< b->cols; j++) {
-            SDL_Rect dest;
-
-            SDL_RenderCopy(gs->renderer, img, NULL, &texr);
+    for (int i = 0; i < board->rows; i++) {
+        for (int j = 0; j < board->cols; j++) {
+            render_cell(gs, assets, &board->grid[i][j]);
         }
     }
     SDL_RenderPresent(gs->renderer);

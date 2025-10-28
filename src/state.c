@@ -37,8 +37,10 @@ void read_input(GameState *gs, InputState *input) {
     }
 }
 
-void init_gui(GameState *gs, const char *title, int w, int h) {
+void init_gui(GameState *gs, InputState *input, const char *title, int w, int h) {
     memset(gs, 0, sizeof(*gs));
+    memset(input, 0, sizeof(*input));
+
     gs->should_continue = 1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
