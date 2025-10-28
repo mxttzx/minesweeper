@@ -1,12 +1,34 @@
 CC = gcc
-CFLAGS = `sdl2-config --cflags`
+CFLAGS = -Wall -Wextra -g `sdl2-config --cflags` -I include
 LDFLAGS = `sdl2-config --libs`
-SRC = ./gui/GUI.c
-OUT = front
 
-$(OUT): $(SRC)
-	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) -o $(OUT)
-	@echo "Compiled GUI successfully."
+SRC_DIR = src
+OBJ_DIR = obj
+OUT = game
+
+SRC := $(shell find $(SRC_DIR) -type f -name '*.c' -print) main.c
+
+OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
+
+vpath %.c . $(SRC_DIR) $(shell find $(SRC_DIR) -type d -printf "%p ")
+
+.PHONY: all clean print
+all: $(OUT)
+
+$(OUT): $(OBJ)
+	$(CC) $(OBJ) $(LDFLAGS) -o $(OUT)
+	@echo "Compiled minesweeper successfully."
+
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 clean:
-	rm -f $(OUT)
+	rm -rf $(OBJ_DIR) $(OUT)
+
+print:
+	@echo "SRC = $(SRC)"
+	@echo "OBJ = $(OBJ)"
