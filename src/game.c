@@ -27,5 +27,12 @@ void render_game(GameState *gs, Board *b) {
     SDL_SetRenderDrawColor(gs->renderer, 255, 255, 255, 255);
     SDL_RenderClear(gs->renderer);
 
+    for (int i = 0; i < b->rows; i++) {
+        for (int j = 0; i< b->cols; j++) {
+            SDL_Rect dest;
+
+            SDL_RenderCopy(gs->renderer, img, NULL, &texr);
+        }
+    }
     SDL_RenderPresent(gs->renderer);
 }
