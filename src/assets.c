@@ -35,10 +35,9 @@ void load_assets(SDL_Renderer *renderer, Assets *assets) {
             fprintf(stderr, "Failed to create texture from mine.bmp: %s\n", SDL_GetError());
     }
 
-
     for (int i = 0; i <= 8; i++) {
         char path[64];
-        snprintf(path, sizeof(path), "../assets/%d.bmp", i);
+        snprintf(path, sizeof(path), "./assets/%d.bmp", i);
         surface = SDL_LoadBMP(path);
         assets->numbers[i] = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);

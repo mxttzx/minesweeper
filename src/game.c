@@ -4,7 +4,7 @@ Board* new_board() {
     Board *board = malloc(sizeof(Board));
 
     if (!board) {
-        perror("Failed to initialize empty board");
+        perror("new_board: failed to initialize empty board");
         exit(1);
     }
 
@@ -15,11 +15,13 @@ void new_game(GameState *gs, Board *board) {
     init_grid(board);
     place_mines(board);
     calc_mines(board);
+    gs->game_over = 0;
 }
 
 void update_game(GameState *gs, InputState *input, Board *board) {
     if (input->keys[SDLK_g]) {
         new_game(gs, board);
+        input->keys[SDLK_g] = 0;
     }
 
     if (input->keys[SDLK_p]) {
@@ -55,15 +57,18 @@ void handle_click(GameState *gs, Board *board, int mouse_x, int mouse_y) {
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
     SDL_Texture *text = NULL;
 
-    if (!cell->is_seen) text = assets->covered;
-    else if (!cell->is_flag) text = assets->flagged;
+    if (cell->is_flag) text = assets->flagged;
+    else if (!cell->is_seen) text = assets->covered;
     else if (cell->is_mine) text = assets->mine;
     else text = assets->numbers[cell->neig_mines];
 
     SDL_Rect dest = {
         cell->x * CELL_WIDTH,
         cell->y * CELL_HEIGHT,
-        CELL_WIDTH, CELL_HEIGHT};
+        CELL_WIDTH,
+        CELL_HEIGHT
+    };
+
     SDL_RenderCopy(gs->renderer, text, NULL, &dest);
 }
 
