@@ -6,8 +6,8 @@
 #include "SDL_surface.h"
 
 #define PATH_FLAGGED "../assets/flagged.bmp";
-#define PATH_MINE "../assets/mine.bmp";
 #define PATH_COVERED "../assets/covered.bmp";
+#define PATH_MINE "../assets/mine.bmp";
 
 typedef struct {
     SDL_Texture *flagged;

@@ -7,8 +7,10 @@
 #include "../include/assets.h"
 
 Board* new_board();
+
 void new_game(GameState *gs, Board *board);
 void update_game(GameState *gs, InputState *input, Board *board);
 void render_game(GameState *gs, Board *board, Assets *assets);
+void handle_click(GameState *gs, Board *board, int x, int y);
 
 #endif

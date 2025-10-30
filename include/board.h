@@ -1,19 +1,20 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #define ROWS 9
 #define COLS 9
 #define MINES 10
 #define MINE 1
 
-#include <time.h>
-#include <stdlib.h>
-
-#define IMAGE_MINE "../assets/mine.bmp"
-#define IMAGE_COVERED "../assets/covered.bmp"
+#define CELL_WIDTH 50
+#define CELL_HEIGHT 50
 
 typedef struct {
-    char *asset;
     int x, y;
     int w, h;
     int neig_mines;
