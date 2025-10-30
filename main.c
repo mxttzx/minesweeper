@@ -17,9 +17,12 @@ int main(int argc, char *argv[]) {
 
     while(gs.should_continue) {
         read_input(&gs, &input);
-        update_game(&gs, &input, board);
+        update_game(&gs, board, &input);
         render_game(&gs, board, &assets);
     }
 
+    free_assets(&assets);
+    free(board);
+    free_gui(&gs);
     return 0;
 }

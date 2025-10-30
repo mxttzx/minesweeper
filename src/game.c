@@ -19,7 +19,7 @@ void new_game(GameState *gs, Board *board) {
     gs->game_over = 0;
 }
 
-void update_game(GameState *gs, InputState *input, Board *board) {
+void update_game(GameState *gs, Board *board, InputState *input) {
     if (input->keys[SDLK_g]) {
         new_game(gs, board);
         input->keys[SDLK_g] = 0;
@@ -82,8 +82,8 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     if (cell->is_seen || cell->is_flag) return;
 
     if (cell->is_mine) {
-        reveal_board(board);
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "YOU LOST!", "Press 'g' to start a new game!", NULL);
+        reveal_board(board);
         gs->game_over = 1;
         return;
     }
