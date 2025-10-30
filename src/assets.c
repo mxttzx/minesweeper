@@ -1,46 +1,38 @@
 #include "../include/assets.h"
+#include "SDL_render.h"
+#include "SDL_surface.h"
 
+
+static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
+    SDL_Surface *surface = SDL_LoadBMP(path);
+    if (!surface) {
+        fprintf(stderr, "load_asset: failed to load %s: %s\n", path, SDL_GetError());
+        exit(1);
+    }
+
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    if (!texture) {
+        fprintf(stderr, "load_asset: failed to create texture from %s: %s\n", path, SDL_GetError());
+        exit(1);
+    }
+
+    return texture;
+}
 
 // Need to optimize, but will work for now
 void load_assets(SDL_Renderer *renderer, Assets *assets) {
     SDL_Surface *surface;
 
-    surface = SDL_LoadBMP("./assets/flagged.bmp");
-    if (!surface) {
-        fprintf(stderr, "Failed to load flagged.bmp: %s\n", SDL_GetError());
-    } else {
-        assets->flagged = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
-        if (!assets->flagged)
-            fprintf(stderr, "Failed to create texture from flagged.bmp: %s\n", SDL_GetError());
-    }
-
-    surface = SDL_LoadBMP("./assets/covered.bmp");
-    if (!surface) {
-        fprintf(stderr, "Failed to load covered.bmp: %s\n", SDL_GetError());
-    } else {
-        assets->covered = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
-        if (!assets->covered)
-            fprintf(stderr, "Failed to create texture from covered.bmp: %s\n", SDL_GetError());
-    }
-
-    surface = SDL_LoadBMP("./assets/mine.bmp");
-    if (!surface) {
-        fprintf(stderr, "Failed to load mine.bmp: %s\n", SDL_GetError());
-    } else {
-        assets->mine = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
-        if (!assets->mine)
-            fprintf(stderr, "Failed to create texture from mine.bmp: %s\n", SDL_GetError());
-    }
+    assets->flagged = load_asset(renderer, "assets/flagged.bmp");
+    assets->covered = load_asset(renderer, "assets/covered.bmp");
+    assets->mine = load_asset(renderer, "assets/mine.bmp");
 
     for (int i = 0; i <= 8; i++) {
         char path[64];
         snprintf(path, sizeof(path), "./assets/%d.bmp", i);
-        surface = SDL_LoadBMP(path);
-        assets->numbers[i] = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
+        assets->numbers[i] = load_asset(renderer, path);
     }
 }
 
@@ -48,5 +40,6 @@ void free_assets(Assets *assets) {
     SDL_DestroyTexture(assets->flagged);
     SDL_DestroyTexture(assets->mine);
     SDL_DestroyTexture(assets->covered);
-    for (int i = 0; i <= 8; i++) SDL_DestroyTexture(assets->numbers[i]);
+    for (int i = 0; i <= 8; i++)
+        SDL_DestroyTexture(assets->numbers[i]);
 }

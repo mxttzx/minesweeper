@@ -4,7 +4,7 @@ Board* new_board() {
     Board *board = malloc(sizeof(Board));
 
     if (!board) {
-        perror("new_board: failed to initialize empty board");
+        fprintf(stderr, "new_board: failed to initialize empty board");
         exit(1);
     }
 
