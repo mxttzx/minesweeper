@@ -22,7 +22,6 @@ void update_game(GameState *gs, InputState *input, Board *board) {
     if (input->keys[SDLK_g]) {
         new_game(gs, board);
         input->keys[SDLK_g] = 0;
-        input->mouse_input = 0;
         return;
     }
     if (input->keys[SDLK_x]) {
@@ -33,10 +32,6 @@ void update_game(GameState *gs, InputState *input, Board *board) {
 
     int row = input->mouse_y / CELL_HEIGHT;
     int col = input->mouse_x / CELL_WIDTH;
-
-    if (row < 0 || row >= board->rows ||
-          col < 0 || col >= board->cols)
-          return;
 
     if (input->keys[SDLK_f]) {
         flag_single(board, row, col);
@@ -64,6 +59,10 @@ void flag_single(Board *board, int row, int col) {
 }
 
 void reveal_single(GameState *gs, Board *board, int row, int col) {
+    if (row < 0 || row >= board->rows ||
+        col < 0 || col >= board->cols)
+        return;
+
     Cell *cell = &board->grid[row][col];
 
     if (cell->is_seen || cell->is_flag) return;

@@ -10,8 +10,8 @@
 
 #define GAME_NAME "Minesweeper"
 
-#define WINDOW_WIDTH 500
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 450
+#define WINDOW_HEIGHT 450
 
 typedef struct {
     SDL_Renderer *renderer;

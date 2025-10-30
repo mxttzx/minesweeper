@@ -1,4 +1,5 @@
 #include "../include/state.h"
+#include "SDL_events.h"
 #include "SDL_mouse.h"
 
 static int is_relevant_event(SDL_Event *event) {
@@ -6,6 +7,7 @@ static int is_relevant_event(SDL_Event *event) {
         return 0;
     }
     return (event->type == SDL_MOUSEBUTTONDOWN) ||
+            (event->type == SDL_MOUSEBUTTONUP) ||
             (event->type == SDL_KEYDOWN) ||
             (event->type == SDL_QUIT);
 }
@@ -30,11 +32,21 @@ void read_input(GameState *gs, InputState *input) {
             break;
 
             case SDL_MOUSEBUTTONDOWN:
-            input->mouse_input = 1;
-            break;
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    input->mouse_input = 1;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    input->keys[SDLK_f] = 1;
+                }
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    input->mouse_input = 0;
+                }
+                break;
         }
     }
-
     SDL_GetMouseState(&input->mouse_x, &input->mouse_y);
 }
 
