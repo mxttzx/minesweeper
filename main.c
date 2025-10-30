@@ -21,8 +21,5 @@ int main(int argc, char *argv[]) {
         render_game(&gs, board, &assets);
     }
 
-    free_assets(&assets);
-    free(board);
-    free_gui(&gs);
     return 0;
 }

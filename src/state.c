@@ -1,6 +1,5 @@
 #include "../include/state.h"
-#include "SDL_events.h"
-#include "SDL_mouse.h"
+#include "SDL.h"
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -20,16 +19,17 @@ void read_input(GameState *gs, InputState *input) {
 
         switch (event.type) {
             case SDL_KEYDOWN:
-            input->keys[event.key.keysym.sym] = 1;
-            break;
+                input->keys[event.key.keysym.sym] = 1;
+                break;
 
             case SDL_KEYUP:
-            input->keys[event.key.keysym.sym] = 0;
-            break;
+                input->keys[event.key.keysym.sym] = 0;
+                break;
 
             case SDL_QUIT:
-            input->quit = 1;
-            break;
+                gs->should_continue = 0;
+                SDL_Quit();
+                break;
 
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {

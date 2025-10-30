@@ -1,4 +1,5 @@
 #include "../include/game.h"
+#include "SDL_messagebox.h"
 
 Board* new_board() {
     Board *board = malloc(sizeof(Board));
@@ -24,11 +25,6 @@ void update_game(GameState *gs, InputState *input, Board *board) {
         input->keys[SDLK_g] = 0;
         return;
     }
-    if (input->keys[SDLK_x]) {
-        gs->should_continue = 0;
-        gs->game_over = 1;
-        return;
-    }
 
     int row = input->mouse_y / CELL_HEIGHT;
     int col = input->mouse_x / CELL_WIDTH;
@@ -43,6 +39,13 @@ void update_game(GameState *gs, InputState *input, Board *board) {
         reveal_single(gs, board, row, col);
         return;
     }
+
+    if (game_won(board)) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "YOU WON!", "Press 'g' to start a new game!", NULL);
+        gs->game_over = 1;
+        gs->should_continue = 0;
+        return;
+    }
 }
 
 void reveal_board(Board *board) {
@@ -50,6 +53,17 @@ void reveal_board(Board *board) {
         ((Cell *)board->grid)[i].is_seen = 1;
         ((Cell *)board->grid)[i].is_flag = 0;
     }
+}
+
+int game_won(Board *board) {
+    int count = 0;
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        if (((Cell *)board->grid)[i].is_mine &&
+            ((Cell *)board->grid)[i].is_flag) {
+                count++;
+            }
+    }
+    return count == MINES;
 }
 
 void flag_single(Board *board, int row, int col) {
@@ -69,6 +83,7 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
 
     if (cell->is_mine) {
         reveal_board(board);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "YOU LOST!", "Press 'g' to start a new game!", NULL);
         gs->game_over = 1;
         return;
     }

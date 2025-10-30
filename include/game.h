@@ -14,5 +14,6 @@ void render_game(GameState *gs, Board *board, Assets *assets);
 void reveal_single(GameState *gs, Board *board, int x, int y);
 void flag_single(Board *board, int x, int y);
 void reveal_board(Board *board);
+int game_won(Board *board);
 
 #endif

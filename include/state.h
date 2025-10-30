@@ -7,6 +7,9 @@
 #include "SDL_scancode.h"
 #include "SDL_video.h"
 #include "SDL.h"
+#include "SDL_events.h"
+#include "SDL_mouse.h"
+#include "assets.h"
 
 #define GAME_NAME "Minesweeper"
 
