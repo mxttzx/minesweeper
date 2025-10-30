@@ -12,5 +12,7 @@ void new_game(GameState *gs, Board *board);
 void update_game(GameState *gs, InputState *input, Board *board);
 void render_game(GameState *gs, Board *board, Assets *assets);
 void reveal_single(GameState *gs, Board *board, int x, int y);
+void flag_single(Board *board, int x, int y);
+void reveal_board(Board *board);
 
 #endif

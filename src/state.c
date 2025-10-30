@@ -1,4 +1,5 @@
 #include "../include/state.h"
+#include "SDL_mouse.h"
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -15,26 +16,26 @@ void read_input(GameState *gs, InputState *input) {
     while (SDL_PollEvent(&event)) {
         if (!is_relevant_event(&event)) continue;
 
-    switch (event.type) {
-        case SDL_KEYDOWN:
-        input->keys[event.key.keysym.sym] = 1;
-        break;
+        switch (event.type) {
+            case SDL_KEYDOWN:
+            input->keys[event.key.keysym.sym] = 1;
+            break;
 
-        case SDL_KEYUP:
-        input->keys[event.key.keysym.sym] = 0;
-        break;
+            case SDL_KEYUP:
+            input->keys[event.key.keysym.sym] = 0;
+            break;
 
-        case SDL_QUIT:
-        input->quit = 1;
-        break;
+            case SDL_QUIT:
+            input->quit = 1;
+            break;
 
-        case SDL_MOUSEBUTTONDOWN:
-        input->mouse_x = event.button.x;
-        input->mouse_y = event.button.y;
-        input->mouse_input = 1;
-        break;
+            case SDL_MOUSEBUTTONDOWN:
+            input->mouse_input = 1;
+            break;
         }
     }
+
+    SDL_GetMouseState(&input->mouse_x, &input->mouse_y);
 }
 
 void init_gui(GameState *gs, InputState *input, const char *title, int w, int h) {

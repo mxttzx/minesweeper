@@ -22,35 +22,54 @@ void update_game(GameState *gs, InputState *input, Board *board) {
     if (input->keys[SDLK_g]) {
         new_game(gs, board);
         input->keys[SDLK_g] = 0;
+        input->mouse_input = 0;
+        return;
     }
-
-    if (input->keys[SDLK_p]) {
-        gs->should_continue = 0;
-    }
-
     if (input->keys[SDLK_x]) {
         gs->should_continue = 0;
         gs->game_over = 1;
+        return;
+    }
+
+    int row = input->mouse_y / CELL_HEIGHT;
+    int col = input->mouse_x / CELL_WIDTH;
+
+    if (row < 0 || row >= board->rows ||
+          col < 0 || col >= board->cols)
+          return;
+
+    if (input->keys[SDLK_f]) {
+        flag_single(board, row, col);
+        input->keys[SDLK_f] = 0;
+        return;
     }
 
     if (input->mouse_input) {
-        int row = input->mouse_y / CELL_HEIGHT;
-        int col = input->mouse_x / CELL_WIDTH;
-
         reveal_single(gs, board, row, col);
+        return;
     }
 }
 
-void reveal_single(GameState *gs, Board *board, int row, int col) {
-    if (row < 0 || row >= board->rows ||
-        col < 0 || col >= board->cols)
-        return;
+void reveal_board(Board *board) {
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        ((Cell *)board->grid)[i].is_seen = 1;
+        ((Cell *)board->grid)[i].is_flag = 0;
+    }
+}
 
+void flag_single(Board *board, int row, int col) {
+    Cell *cell = &board->grid[row][col];
+    if (cell->is_seen) return;
+    cell->is_flag = !cell->is_flag;
+}
+
+void reveal_single(GameState *gs, Board *board, int row, int col) {
     Cell *cell = &board->grid[row][col];
 
     if (cell->is_seen || cell->is_flag) return;
 
     if (cell->is_mine) {
+        reveal_board(board);
         gs->game_over = 1;
         return;
     }
@@ -63,7 +82,6 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++)
                 reveal_single(gs, board, row + dx, col + dy);
-
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
