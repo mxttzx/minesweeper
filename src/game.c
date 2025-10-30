@@ -34,24 +34,36 @@ void update_game(GameState *gs, InputState *input, Board *board) {
     }
 
     if (input->mouse_input) {
-        handle_click(gs, board, input->mouse_x, input->mouse_y);
+        int row = input->mouse_y / CELL_HEIGHT;
+        int col = input->mouse_x / CELL_WIDTH;
+
+        reveal_single(gs, board, row, col);
     }
 }
 
-void handle_click(GameState *gs, Board *board, int mouse_x, int mouse_y) {
-    int row = mouse_y / CELL_HEIGHT;
-    int col = mouse_x / CELL_WIDTH;
+void reveal_single(GameState *gs, Board *board, int row, int col) {
+    if (row < 0 || row >= board->rows ||
+        col < 0 || col >= board->cols)
+        return;
 
-    if (row >= 0 && row <= board->rows &&
-        col >= 0 && col <= board->cols) {
-        Cell *cell = &board->grid[row][col];
+    Cell *cell = &board->grid[row][col];
 
-        if (!cell->is_seen)
-            cell->is_seen = 1;
+    if (cell->is_seen || cell->is_flag) return;
 
-        if (cell->is_mine)
-            gs->game_over = 1;
+    if (cell->is_mine) {
+        gs->game_over = 1;
+        return;
     }
+
+    cell->is_seen = 1;
+
+    if (cell->neig_mines > 0) return;
+
+    if (cell->neig_mines == 0)
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dy = -1; dy <= 1; dy++)
+                reveal_single(gs, board, row + dx, col + dy);
+
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
