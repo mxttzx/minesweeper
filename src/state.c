@@ -7,6 +7,7 @@ static int is_relevant_event(SDL_Event *event) {
     }
     return (event->type == SDL_MOUSEBUTTONDOWN) ||
             (event->type == SDL_MOUSEBUTTONUP) ||
+            (event->type == SDL_KEYUP) ||
             (event->type == SDL_KEYDOWN) ||
             (event->type == SDL_QUIT);
 }
@@ -18,14 +19,6 @@ void read_input(GameState *gs, InputState *input) {
         if (!is_relevant_event(&event)) continue;
 
         switch (event.type) {
-            case SDL_KEYDOWN:
-                input->keys[event.key.keysym.sym] = 1;
-                break;
-
-            case SDL_KEYUP:
-                input->keys[event.key.keysym.sym] = 0;
-                break;
-
             case SDL_QUIT:
                 gs->should_continue = 0;
                 SDL_Quit();
@@ -42,6 +35,9 @@ void read_input(GameState *gs, InputState *input) {
 
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
+                    input->mouse_input = 0;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
                     input->mouse_input = 0;
                 }
                 break;

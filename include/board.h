@@ -24,13 +24,14 @@ typedef struct {
 } Cell;
 
 typedef struct {
-    Cell grid[ROWS][COLS];
+    Cell **grid;
     int total_mines;
     int rows;
     int cols;
 } Board;
 
-void init_grid(Board *board);
+Board *init_board(int rows, int cols, int mines);
+void free_board(Board *board);
 void place_mines(Board *board, int x, int y);
 void calc_mines(Board *board);
 

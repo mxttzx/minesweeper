@@ -1,20 +1,42 @@
 #include "../include/board.h"
 
-void init_grid(Board *board)
-{
-    board->rows = ROWS;
-    board->cols = COLS;
-    board->total_mines = MINES;
+Board *init_board(int rows, int cols, int mines) {
+    Board *board = malloc(sizeof(Board));
 
-    memset(board->grid, 0, sizeof(board->grid));
+    if (!board) {
+        fprintf(stderr, "new_board: failed to initialize empty board");
+        exit(1);
+    }
+
+    board->rows = rows;
+    board->cols = cols;
+    board->total_mines = mines;
+    board->grid = malloc(rows * sizeof(Cell *));
+    for (int r = 0; r < rows; r++) {
+        board->grid[r] = malloc(cols * sizeof(Cell));
+    }
 
     int i, j;
     for (i = 0; i < board->rows; i++) {
         for (j = 0; j < board->cols; j++) {
             board->grid[i][j].x = j;
             board->grid[i][j].y = i;
+            board->grid[i][j].is_mine = 0;
+            board->grid[i][j].is_seen = 0;
+            board->grid[i][j].is_flag = 0;
+            board->grid[i][j].neig_mines = 0;
         }
     }
+
+    return board;
+}
+
+void free_board(Board *board) {
+    for (int i = 0; i < board->rows; i++) {
+        free(board->grid[i]);
+    }
+    free(board->grid);
+    free(board);
 }
 
 void calc_mines(Board *board) {

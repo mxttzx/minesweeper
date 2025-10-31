@@ -1,32 +1,22 @@
 #include "../include/game.h"
-#include "SDL_messagebox.h"
 
-Board* new_board() {
-    Board *board = malloc(sizeof(Board));
-
-    if (!board) {
-        fprintf(stderr, "new_board: failed to initialize empty board");
-        exit(1);
-    }
+Board *new_game(GameState *gs, int rows, int cols, int mines) {
+    Board *board = init_board(rows, cols, mines);
+    gs->game_over = 0;
+    gs->first_move = 1;
 
     return board;
 }
 
-void new_game(GameState *gs, Board *board) {
-    init_grid(board);
-    gs->game_over = 0;
-}
-
 void update_game(GameState *gs, Board *board, InputState *input) {
-    if (input->keys[SDLK_g]) {
-        new_game(gs, board);
-        input->keys[SDLK_g] = 0;
-        gs->first_move = 1;
-        return;
-    }
-
     int row = input->mouse_y / CELL_HEIGHT;
     int col = input->mouse_x / CELL_WIDTH;
+
+    if (input->keys[SDLK_f]) {
+        flag_single(board, row, col);
+        input->keys[SDLK_f] = 0;
+        return;
+    }
 
     if (input->mouse_input) {
         reveal_single(gs, board, row, col);
@@ -41,21 +31,23 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 }
 
 void reveal_board(Board *board) {
-    for (int i = 0; i < board->rows * board->cols; i++) {
-        ((Cell *)board->grid)[i].is_seen = 1;
-        ((Cell *)board->grid)[i].is_flag = 0;
+    for (int r = 0; r < board->rows; r++) {
+        for (int c = 0; c < board->cols; c++) {
+            board->grid[r][c].is_seen = 1;
+            board->grid[r][c].is_flag = 0;
+        }
     }
 }
 
 int game_won(Board *board) {
-    int count = 0;
-    for (int i = 0; i < board->rows * board->cols; i++) {
-        if (((Cell *)board->grid)[i].is_mine &&
-            ((Cell *)board->grid)[i].is_flag) {
-                count++;
-            }
+    for (int r = 0; r < board->rows; r++) {
+        for (int c = 0; c < board->cols; c++) {
+            Cell *cell = &board->grid[r][c];
+            if (!cell->is_mine && !cell->is_seen) return 0;
+            if (cell->is_mine && !cell->is_flag) return 0;
+        }
     }
-    return count == MINES;
+    return 1;
 }
 
 void flag_single(Board *board, int row, int col) {
