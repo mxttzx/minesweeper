@@ -55,6 +55,7 @@ void init_gui(GameState *gs, InputState *input, const char *title, int w, int h)
     memset(input, 0, sizeof(*input));
 
     gs->should_continue = 1;
+    gs->first_move = 1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());

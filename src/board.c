@@ -40,7 +40,7 @@ void calc_mines(Board *board) {
     }
 }
 
-void place_mines(Board *board)
+void place_mines(Board *board, int safe_x, int safe_y)
 {
     if (board->total_mines <= 0) return;
     if (board->total_mines >= board->rows * board->cols){
@@ -53,6 +53,9 @@ void place_mines(Board *board)
     while (placed_mines < board->total_mines) {
         int row_mine = rand() % board->rows;
         int col_mine = rand() % board->cols;
+
+        if (abs(row_mine - safe_x) <= 1 && abs(col_mine - safe_y) <= 1)
+            continue;
 
         if (!board->grid[row_mine][col_mine].is_mine) {
             board->grid[row_mine][col_mine].is_mine = 1;

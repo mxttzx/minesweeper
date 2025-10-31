@@ -30,8 +30,8 @@ typedef struct {
     int cols;
 } Board;
 
-void init_grid(Board *);
-void place_mines(Board *);
-void calc_mines(Board *);
+void init_grid(Board *board);
+void place_mines(Board *board, int x, int y);
+void calc_mines(Board *board);
 
 #endif

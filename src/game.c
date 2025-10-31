@@ -14,8 +14,6 @@ Board* new_board() {
 
 void new_game(GameState *gs, Board *board) {
     init_grid(board);
-    place_mines(board);
-    calc_mines(board);
     gs->game_over = 0;
 }
 
@@ -23,17 +21,12 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     if (input->keys[SDLK_g]) {
         new_game(gs, board);
         input->keys[SDLK_g] = 0;
+        gs->first_move = 1;
         return;
     }
 
     int row = input->mouse_y / CELL_HEIGHT;
     int col = input->mouse_x / CELL_WIDTH;
-
-    if (input->keys[SDLK_f]) {
-        flag_single(board, row, col);
-        input->keys[SDLK_f] = 0;
-        return;
-    }
 
     if (input->mouse_input) {
         reveal_single(gs, board, row, col);
@@ -41,7 +34,6 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     }
 
     if (game_won(board)) {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "YOU WON!", "Press 'g' to start a new game!", NULL);
         gs->game_over = 1;
         gs->should_continue = 0;
         return;
@@ -77,12 +69,17 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
         col < 0 || col >= board->cols)
         return;
 
+    if (gs->first_move) {
+        place_mines(board, row, col);
+        calc_mines(board);
+        gs->first_move = 0;
+    }
+
     Cell *cell = &board->grid[row][col];
 
     if (cell->is_seen || cell->is_flag) return;
 
     if (cell->is_mine) {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "YOU LOST!", "Press 'g' to start a new game!", NULL);
         reveal_board(board);
         gs->game_over = 1;
         return;

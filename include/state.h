@@ -15,6 +15,7 @@
 
 #define WINDOW_WIDTH 450
 #define WINDOW_HEIGHT 450
+#define STATUS_HEIGHT 50
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -22,6 +23,7 @@ typedef struct {
     int should_continue;
     int mouse_x, mouse_y;
     int game_over;
+    int first_move;
 } GameState;
 
 typedef struct {
