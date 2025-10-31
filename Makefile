@@ -4,7 +4,7 @@ LDFLAGS = `sdl2-config --libs`
 
 SRC_DIR = src
 OBJ_DIR = obj
-OUT = game
+OUT = minesweeper
 
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c' -print) main.c
 
@@ -12,7 +12,7 @@ OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
 vpath %.c . $(SRC_DIR) $(shell find $(SRC_DIR) -type d -printf "%p ")
 
-.PHONY: all clean print
+.PHONY: all clean
 all: $(OUT)
 
 $(OUT): $(OBJ)
@@ -28,7 +28,3 @@ $(OBJ_DIR):
 
 clean:
 	rm -rf $(OBJ_DIR) $(OUT)
-
-print:
-	@echo "SRC = $(SRC)"
-	@echo "OBJ = $(OBJ)"
