@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
 
     srand((unsigned) time(NULL)); // Initialize a random seed based on int time value
 
+    new_game(&gs, board);
     while(gs.should_continue) {
         read_input(&gs, &input);
         update_game(&gs, board, &input);
