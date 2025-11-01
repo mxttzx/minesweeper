@@ -1,2 +1,7 @@
-# minesweeper
-Minesweeper implementation in C
+# Minesweeper implementation in C
+
+To compile and run:
+```
+make
+./minesweeper
+```
