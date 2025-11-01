@@ -12,10 +12,8 @@
 #include "assets.h"
 
 #define GAME_NAME "Minesweeper"
-
-#define WINDOW_WIDTH 450
-#define WINDOW_HEIGHT 450
-#define STATUS_HEIGHT 50
+#define WON "YOU WON!"
+#define LOST "YOU LOST!"
 
 typedef struct {
     SDL_Renderer *renderer;

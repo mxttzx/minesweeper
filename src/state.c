@@ -1,5 +1,4 @@
 #include "../include/state.h"
-#include "SDL.h"
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -54,14 +53,14 @@ void init_gui(GameState *gs, InputState *input, const char *title, int w, int h)
     gs->first_move = 1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
+        fprintf(stderr, "init_gui: failed to initialize SDL: %s\n", SDL_GetError());
         exit(1);
     }
 
     gs->window = SDL_CreateWindow(title, 0, 0, w, h, SDL_WINDOW_SHOWN);
 
     if (!gs->window) {
-        fprintf(stderr, "SDL_CreateWindow failed: %s\n", SDL_GetError());
+        fprintf(stderr, "init_gui: failed to create SDL window: %s\n", SDL_GetError());
         exit(1);
     }
 

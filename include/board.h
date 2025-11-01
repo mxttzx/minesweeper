@@ -6,11 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ROWS 9
-#define COLS 9
-#define MINES 10
-#define MINE 1
-
 #define CELL_WIDTH 50
 #define CELL_HEIGHT 50
 

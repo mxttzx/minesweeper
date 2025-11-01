@@ -26,7 +26,7 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     if (game_won(board)) {
         gs->game_over = 1;
         gs->should_continue = 0;
-        return;
+        SDL_SetWindowTitle(gs->window, WON);
     }
 }
 
@@ -72,6 +72,7 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     if (cell->is_seen || cell->is_flag) return;
 
     if (cell->is_mine) {
+        SDL_SetWindowTitle(gs->window, LOST);
         reveal_board(board);
         gs->game_over = 1;
         return;
@@ -81,6 +82,7 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
 
     if (cell->neig_mines > 0) return;
 
+    // Recursively reveal for all cells with zero neighbors
     if (cell->neig_mines == 0)
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++)
