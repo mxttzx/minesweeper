@@ -62,11 +62,10 @@ void calc_mines(Board *board) {
     }
 }
 
-void place_mines(Board *board, int safe_x, int safe_y)
-{
+void place_mines(Board *board, int safe_x, int safe_y) {
     if (board->total_mines <= 0) return;
     if (board->total_mines >= board->rows * board->cols){
-        fprintf(stderr, "place_mines: invalid total mines (%d) > grid cells (%d)\n",
+        fprintf(stderr, "place_mines: invalid total mines (%d) >= grid cells (%d)\n",
             board->total_mines, board->rows * board->cols);
         exit(1);
     }
