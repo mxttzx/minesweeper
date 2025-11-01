@@ -23,8 +23,6 @@ static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
 
 // Need to optimize, but will work for now
 void load_assets(SDL_Renderer *renderer, Assets *assets) {
-    SDL_Surface *surface;
-
     assets->flagged = load_asset(renderer, "assets/flagged.bmp");
     assets->covered = load_asset(renderer, "assets/covered.bmp");
     assets->mine = load_asset(renderer, "assets/mine.bmp");
