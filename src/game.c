@@ -12,14 +12,15 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     int row = input->mouse_y / CELL_HEIGHT;
     int col = input->mouse_x / CELL_WIDTH;
 
-    if (input->keys[SDLK_f]) {
+    if (input->keys[SDL_BUTTON_RIGHT]) {
         flag_single(board, row, col);
-        input->keys[SDLK_f] = 0;
+        input->keys[SDL_BUTTON_RIGHT] = 0;
         return;
     }
 
-    if (input->mouse_input) {
+    if (input->keys[SDL_BUTTON_LEFT]) {
         reveal_single(gs, board, row, col);
+        input->keys[SDL_BUTTON_LEFT] = 0;
         return;
     }
 

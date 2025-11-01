@@ -25,19 +25,19 @@ void read_input(GameState *gs, InputState *input) {
 
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    input->mouse_input = 1;
+                    input->keys[SDL_BUTTON_LEFT] = 1;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    input->keys[SDLK_f] = 1;
+                    input->keys[SDL_BUTTON_RIGHT] = 1;
                 }
                 break;
 
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    input->mouse_input = 0;
+                    input->keys[SDL_BUTTON_LEFT] = 0;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    input->mouse_input = 0;
+                    input->keys[SDL_BUTTON_RIGHT] = 0;
                 }
                 break;
         }
