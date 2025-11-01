@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         printf("No custom dimensions provided, resuming with default config: (%dx%d) grid, %d mines\n", rows, cols, mines);
     }
 
-    init_gui(&gs, &input, GAME_NAME, WINDOW_WIDTH, WINDOW_HEIGHT);
+    init_gui(&gs, &input, GAME_NAME, cols * CELL_WIDTH, rows * CELL_HEIGHT);
     load_assets(gs.renderer, &assets);
 
     srand((unsigned) time(NULL)); // Initialize a random seed based on int time value
