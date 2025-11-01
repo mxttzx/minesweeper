@@ -26,7 +26,7 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     if (game_won(board)) {
         gs->game_over = 1;
         gs->should_continue = 0;
-        SDL_SetWindowTitle(gs->window, WON);
+        SDL_SetWindowTitle(gs->window, GAME_WON);
     }
 }
 
@@ -72,7 +72,7 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     if (cell->is_seen || cell->is_flag) return;
 
     if (cell->is_mine) {
-        SDL_SetWindowTitle(gs->window, LOST);
+        SDL_SetWindowTitle(gs->window, GAME_LOST);
         reveal_board(board);
         gs->game_over = 1;
         return;

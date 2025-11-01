@@ -6,8 +6,6 @@
 #include "../include/state.h"
 #include "../include/assets.h"
 
-Board* new_board();
-
 Board *new_game(GameState *gs, int rows, int cols, int mines);
 void update_game(GameState *gs, Board *board, InputState *input);
 void render_game(GameState *gs, Board *board, Assets *assets);

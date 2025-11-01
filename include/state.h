@@ -12,8 +12,8 @@
 #include "assets.h"
 
 #define GAME_NAME "Minesweeper"
-#define WON "YOU WON!"
-#define LOST "YOU LOST!"
+#define GAME_WON "YOU WON!"
+#define GAME_LOST "YOU LOST!"
 
 typedef struct {
     SDL_Renderer *renderer;
