@@ -22,6 +22,7 @@ typedef struct {
     int mouse_x, mouse_y;
     int game_over;
     int first_move;
+    int peek;
 } GameState;
 
 typedef struct {

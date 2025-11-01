@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define CELL_WIDTH 50
 #define CELL_HEIGHT 50
@@ -20,6 +21,7 @@ typedef struct {
 
 typedef struct {
     Cell **grid;
+    bool **mask;
     int total_mines;
     int rows;
     int cols;

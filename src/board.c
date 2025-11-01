@@ -11,9 +11,24 @@ Board *init_board(int rows, int cols, int mines) {
     board->rows = rows;
     board->cols = cols;
     board->total_mines = mines;
+
     board->grid = malloc(rows * sizeof(Cell *));
     for (int r = 0; r < rows; r++) {
         board->grid[r] = malloc(cols * sizeof(Cell));
+    }
+
+    if (!board->grid) {
+        fprintf(stderr, "new_board: failed to initialize empty grid");
+        exit(1);
+    }
+
+    board->mask = malloc(rows * sizeof(bool *));
+    for (int i = 0; i < rows; i++) {
+        board->mask[i] = malloc(cols * sizeof(bool));
+    }
+    if (!board->mask) {
+        fprintf(stderr, "new_board: failed to initialize empty peek mask");
+        exit(1);
     }
 
     int i, j;

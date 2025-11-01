@@ -13,7 +13,7 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     int col = input->mouse_x / CELL_WIDTH;
 
     if (input->keys[SDL_BUTTON_RIGHT]) {
-        flag_single(board, row, col);
+        toggle_flag(board, row, col);
         input->keys[SDL_BUTTON_RIGHT] = 0;
         return;
     }
@@ -24,10 +24,39 @@ void update_game(GameState *gs, Board *board, InputState *input) {
         return;
     }
 
+    if (input->keys[SDLK_f] && !gs->first_move) {
+        toggle_peek(gs, board);
+        input->keys[SDLK_f] = 0;
+        return;
+    }
+
     if (game_won(board)) {
         gs->game_over = 1;
         gs->should_continue = 0;
         SDL_SetWindowTitle(gs->window, GAME_WON);
+    }
+}
+
+void toggle_peek(GameState *gs, Board *board) {
+    if (!gs->peek) {
+        for (int i = 0; i < board->rows; i++) {
+            for (int j = 0; j < board->cols; j++) {
+                board->mask[i][j] = !board->grid[i][j].is_seen;
+                if (board->mask[i][j]) {
+                    board->grid[i][j].is_seen = 1;
+                }
+            }
+        }
+        gs->peek = 1;
+    } else {
+        for (int i = 0; i < board->rows; i++) {
+            for (int j = 0; j < board->cols; j++) {
+                if (board->mask[i][j]) {
+                    board->grid[i][j].is_seen = 0;
+                }
+            }
+        }
+        gs->peek = 0;
     }
 }
 
@@ -51,7 +80,7 @@ int game_won(Board *board) {
     return 1;
 }
 
-void flag_single(Board *board, int row, int col) {
+void toggle_flag(Board *board, int row, int col) {
     Cell *cell = &board->grid[row][col];
     if (cell->is_seen) return;
     cell->is_flag = !cell->is_flag;

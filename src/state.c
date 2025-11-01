@@ -1,4 +1,5 @@
 #include "../include/state.h"
+#include "SDL_events.h"
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -21,6 +22,18 @@ void read_input(GameState *gs, InputState *input) {
             case SDL_QUIT:
                 gs->should_continue = 0;
                 SDL_Quit();
+                break;
+
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_f) {
+                    input->keys[SDLK_f] = 1;
+                }
+                break;
+
+            case SDL_KEYUP:
+                if (event.key.keysym.sym == SDLK_f) {
+                    input->keys[SDLK_f] = 0;
+                }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -51,6 +64,7 @@ void init_gui(GameState *gs, InputState *input, const char *title, int w, int h)
 
     gs->should_continue = 1;
     gs->first_move = 1;
+    gs->peek = 0;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "init_gui: failed to initialize SDL: %s\n", SDL_GetError());
