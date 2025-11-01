@@ -4,6 +4,9 @@ Board *new_game(GameState *gs, int rows, int cols, int mines) {
     Board *board = init_board(rows, cols, mines);
     gs->game_over = 0;
     gs->first_move = 1;
+    gs->should_continue = 1;
+    gs->first_move = 1;
+    gs->peek = 0;
 
     return board;
 }
