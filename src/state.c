@@ -28,11 +28,17 @@ void read_input(GameState *gs, InputState *input) {
                 if (event.key.keysym.sym == SDLK_f) {
                     input->keys[SDLK_f] = 1;
                 }
+                if (event.key.keysym.sym == SDLK_s) {
+                    input->keys[SDLK_s] = 1;
+                }
                 break;
 
             case SDL_KEYUP:
                 if (event.key.keysym.sym == SDLK_f) {
                     input->keys[SDLK_f] = 0;
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                    input->keys[SDLK_s] = 0;
                 }
                 break;
 
@@ -59,9 +65,6 @@ void read_input(GameState *gs, InputState *input) {
 }
 
 void init_gui(GameState *gs, InputState *input, const char *title, int w, int h) {
-    memset(gs, 0, sizeof(*gs));
-    memset(input, 0, sizeof(*input));
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "init_gui: failed to initialize SDL: %s\n", SDL_GetError());
         exit(1);

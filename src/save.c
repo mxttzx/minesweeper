@@ -1,60 +1,77 @@
 #include "../include/save.h"
 
-
-// https://stackoverflow.com/a/9840678
-Board *load_game(const char *filename) {
-    FILE *file = fopen(filename, "rb");
+ Board *load_game(GameState *gs, const char *filename) {
+    FILE *file = fopen(filename, "r");
     if (!file) {
-        fprintf(stderr, "load_game: failed to read file to load game\n");
+        fprintf(stderr, "load_game: failed to read last save file\n");
         exit(1);
     }
 
     int rows, cols, mines;
-    fread(&rows, sizeof(int), 1, file);
-    fread(&cols, sizeof(int), 1, file);
-    fread(&mines, sizeof(int), 1, file);
+    fscanf(file, "%d %d %d", &rows, &cols, &mines); // Read dimension header
 
     Board *board = init_board(rows, cols, mines);
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            fread(&board->grid[i][j].neig_mines, sizeof(int), 1, file);
-            fread(&board->grid[i][j].is_mine, sizeof(int), 1, file);
-            fread(&board->grid[i][j].is_flag, sizeof(int), 1, file);
-            fread(&board->grid[i][j].is_seen, sizeof(int), 1, file);
+    for (int i = 0; i < board->rows; i++) {
+        for (int j = 0; j < board->cols; j++) {
+            char ch;
+            if (fscanf(file, " %c", &ch) == EOF) {
+                fprintf(stderr, "load_game: encountered unexpected EOF when loading last save file: (%d,%d)\n", i, j);
+                exit(1);
+            }
+
+            Cell *cell = &board->grid[i][j];
+            switch (ch) {
+                case 'M': cell->is_mine = 1; break;
+                case '.': cell->is_seen = 0; break;
+                case '+': cell->is_seen = 1; break;
+                case 'F': cell->is_flag = 1; break;
+                case 'X':
+                    cell->is_mine = 1;
+                    cell->is_flag = 1;
+                    break;
+                default:
+                    fprintf(stderr, "load_game: encountered unexpected char when loading last save file: (%d, %d)\n", i, j);
+                    exit(1);
+            }
         }
     }
 
-    for (int i = 0; i < rows; i++) {
-        fread(board->mask[i], sizeof(bool), cols, file);
-    }
+    gs->should_continue = 1;
+    gs->first_move = 0;
+    gs->game_over = 0;
+    gs->peek = 0;
+
+    calc_mines(board);
 
     fclose(file);
+
     return board;
 }
 
-void save_game(Board *board, const char *filename) {
-    FILE *file = fopen(filename, "wb");
+void save_game(GameState *gs, Board *board, const char *filename) {
+    FILE *file = fopen(filename, "wb+");
     if (!file) {
-        fprintf(stderr, "save_game: failed to open file to save game\n");
+        fprintf(stderr, "load_game: failed to read last save file\n");
         exit(1);
     }
 
-    fwrite(&board->rows, sizeof(int), 1, file);
-    fwrite(&board->cols, sizeof(int), 1, file);
-    fwrite(&board->total_mines, sizeof(int), 1, file);
+    fprintf(file, "%d %d %d\n", board->rows, board->cols, board->total_mines);
 
     for (int i = 0; i < board->rows; i++) {
         for (int j = 0; j < board->cols; j++) {
-            fwrite(&board->grid[i][j].neig_mines, sizeof(int), 1, file);
-            fwrite(&board->grid[i][j].is_mine, sizeof(int), 1, file);
-            fwrite(&board->grid[i][j].is_flag, sizeof(int), 1, file);
-            fwrite(&board->grid[i][j].is_seen, sizeof(int), 1, file);
-        }
-    }
+            Cell *cell = &board->grid[i][j];
+            char ch;
 
-    for (int i = 0; i < board->rows; i++) {
-        fwrite(board->mask[i], sizeof(bool), board->cols, file);
+            if (cell->is_flag && cell->is_mine) ch = 'X';
+            else if (cell->is_flag) ch = 'F';
+            else if (cell->is_mine) ch = 'M';
+            else if (cell->is_seen) ch = '+';
+            else ch = '.';
+
+            fputc(ch, file);
+        }
+        fputc('\n', file);
     }
 
     fclose(file);

@@ -21,7 +21,8 @@ typedef struct {
 
 typedef struct {
     Cell **grid;
-    bool **mask;
+    bool **peek_mask;
+    bool **flag_mask;
     int total_mines;
     int rows;
     int cols;

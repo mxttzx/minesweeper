@@ -22,14 +22,24 @@ Board *init_board(int rows, int cols, int mines) {
         exit(1);
     }
 
-    board->mask = malloc(rows * sizeof(bool *));
+    board->peek_mask = malloc(rows * sizeof(bool *));
     for (int i = 0; i < rows; i++) {
-        board->mask[i] = malloc(cols * sizeof(bool));
+        board->peek_mask[i] = malloc(cols * sizeof(bool));
     }
-    if (!board->mask) {
+    if (!board->peek_mask) {
         fprintf(stderr, "new_board: failed to initialize empty peek mask");
         exit(1);
     }
+
+    board->flag_mask = malloc(rows * sizeof(bool *));
+    for (int i = 0; i < rows; i++) {
+        board->flag_mask[i] = malloc(cols * sizeof(bool));
+    }
+    if (!board->flag_mask) {
+        fprintf(stderr, "new_board: failed to initialize empty flag mask");
+        exit(1);
+    }
+
 
     int i, j;
     for (i = 0; i < board->rows; i++) {

@@ -5,7 +5,6 @@ Board *new_game(GameState *gs, int rows, int cols, int mines) {
     gs->game_over = 0;
     gs->first_move = 1;
     gs->should_continue = 1;
-    gs->first_move = 1;
     gs->peek = 0;
 
     return board;
@@ -18,23 +17,24 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     if (input->keys[SDL_BUTTON_RIGHT]) {
         toggle_flag(board, row, col);
         input->keys[SDL_BUTTON_RIGHT] = 0;
-        return;
     }
 
     if (input->keys[SDL_BUTTON_LEFT]) {
         reveal_single(gs, board, row, col);
         input->keys[SDL_BUTTON_LEFT] = 0;
-        return;
     }
 
+    if (input->keys[SDLK_s]) {
+        save_game(gs, board, DEFAULT_FILE);
+        printf("Saving game to %s\n", DEFAULT_FILE);
+        input->keys[SDLK_s] = 0;
+    }
     if (input->keys[SDLK_f] && !gs->first_move) {
         toggle_peek(gs, board);
         input->keys[SDLK_f] = 0;
-        return;
     }
 
     if (game_won(board)) {
-        gs->game_over = 1;
         gs->should_continue = 0;
         SDL_SetWindowTitle(gs->window, GAME_WON);
     }
@@ -44,9 +44,12 @@ void toggle_peek(GameState *gs, Board *board) {
     if (!gs->peek) {
         for (int i = 0; i < board->rows; i++) {
             for (int j = 0; j < board->cols; j++) {
-                board->mask[i][j] = !board->grid[i][j].is_seen;
-                if (board->mask[i][j]) {
+                board->peek_mask[i][j] = !board->grid[i][j].is_seen;
+                board->flag_mask[i][j] = board->grid[i][j].is_flag;
+
+                if (board->peek_mask[i][j]) {
                     board->grid[i][j].is_seen = 1;
+                    board->grid[i][j].is_flag = 0;
                 }
             }
         }
@@ -54,9 +57,10 @@ void toggle_peek(GameState *gs, Board *board) {
     } else {
         for (int i = 0; i < board->rows; i++) {
             for (int j = 0; j < board->cols; j++) {
-                if (board->mask[i][j]) {
+                if (board->peek_mask[i][j]) {
                     board->grid[i][j].is_seen = 0;
                 }
+                board->grid[i][j].is_flag = board->flag_mask[i][j];
             }
         }
         gs->peek = 0;
@@ -77,7 +81,7 @@ int game_won(Board *board) {
         for (int c = 0; c < board->cols; c++) {
             Cell *cell = &board->grid[r][c];
             if (!cell->is_mine && !cell->is_seen) return 0;
-            if (cell->is_mine && !cell->is_flag) return 0;
+            if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
         }
     }
     return 1;
@@ -89,10 +93,13 @@ void toggle_flag(Board *board, int row, int col) {
     cell->is_flag = !cell->is_flag;
 }
 
+int nbounds(Board *board, int row, int col) {
+    return (row < 0 || row >= board->rows ||
+            col < 0 || col >= board->cols);
+}
+
 void reveal_single(GameState *gs, Board *board, int row, int col) {
-    if (row < 0 || row >= board->rows ||
-        col < 0 || col >= board->cols)
-        return;
+    if (nbounds(board, row, col)) return;
 
     if (gs->first_move) {
         place_mines(board, row, col);

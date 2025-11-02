@@ -54,17 +54,21 @@ int main(int argc, char *argv[]) {
     InputState input;
     Assets assets;
 
-    init_gui(&gs, &input, GAME_NAME, arguments.cols * CELL_WIDTH, arguments.rows * CELL_HEIGHT);
-    load_assets(gs.renderer, &assets);
+    memset(&gs, 0, sizeof(gs));
+    memset(&input, 0, sizeof(input));
 
     Board *board;
     if (arguments.file) {
         printf("Loading existing game from load file: %s\n", arguments.file);
-        board = load_game(arguments.file);
+        board = load_game(&gs, arguments.file);
+
     } else {
         printf("Started a new game: (%dx%d), %d mines\n", arguments.rows, arguments.cols, arguments.mines);
         board = new_game(&gs, arguments.rows, arguments.cols, arguments.mines);
     }
+
+    init_gui(&gs, &input, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);
+    load_assets(gs.renderer, &assets);
 
     while(gs.should_continue) {
         read_input(&gs, &input);
