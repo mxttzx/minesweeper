@@ -1,10 +1,11 @@
 #include "../include/save.h"
+#include <stdlib.h>
 
  Board *load_game(GameState *gs, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         fprintf(stderr, "load_game: failed to read last save file\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     int rows, cols, mines;
@@ -54,15 +55,12 @@ void save_game(GameState *gs, Board *board, const char *filename) {
     FILE *file = fopen(filename, "wb+");
     if (!file) {
         fprintf(stderr, "load_game: failed to read last save file\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     fprintf(file, "%d %d %d\n", board->rows, board->cols, board->total_mines);
 
     for (int i = 0; i < board->rows * board->cols; i++) {
-        int row = i / board->cols;
-        int col = i % board->cols;
-
         Cell *cell = &board->grid[i];
         char ch;
 
@@ -74,7 +72,7 @@ void save_game(GameState *gs, Board *board, const char *filename) {
 
         fputc(ch, file);
 
-        if (row == board->rows) fputc('\n', file);
+        if ((i + 1) % board->cols == 0) fputc('\n', file);
     }
     fclose(file);
 }

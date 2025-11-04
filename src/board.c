@@ -2,7 +2,6 @@
 
 Board *init_board(int rows, int cols, int mines) {
     Board *board = malloc(sizeof(Board));
-
     if (!board) {
         fprintf(stderr, "new_board: failed to initialize empty board");
         exit(1);

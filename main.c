@@ -4,6 +4,7 @@
 #include "include/assets.h"
 #include "include/save.h"
 #include <argp.h>
+#include <stdlib.h>
 
 // https://stackoverflow.com/a/24479532
 const char *argp_program_version = "Minesweeper 1.0";
@@ -79,5 +80,6 @@ int main(int argc, char *argv[]) {
     free_assets(&assets);
     free_board(board);
     free_gui(&gs);
-    return 0;
+
+    return EXIT_SUCCESS;
 }
