@@ -67,14 +67,14 @@ void read_input(GameState *gs, InputState *input) {
 void init_gui(GameState *gs, InputState *input, const char *title, int w, int h) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "init_gui: failed to initialize SDL: %s\n", SDL_GetError());
-        EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     gs->window = SDL_CreateWindow(title, 0, 0, w, h, SDL_WINDOW_SHOWN);
 
     if (!gs->window) {
         fprintf(stderr, "init_gui: failed to create SDL window: %s\n", SDL_GetError());
-        EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     gs->renderer = SDL_CreateRenderer(gs->window, -1, SDL_RENDERER_PRESENTVSYNC);

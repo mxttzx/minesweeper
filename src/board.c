@@ -1,10 +1,11 @@
 #include "../include/board.h"
+#include <stdlib.h>
 
 Board *init_board(int rows, int cols, int mines) {
     Board *board = malloc(sizeof(Board));
     if (!board) {
         fprintf(stderr, "new_board: failed to initialize empty board");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     board->rows = rows;
@@ -14,19 +15,19 @@ Board *init_board(int rows, int cols, int mines) {
     board->grid = calloc(rows * cols, sizeof(Cell));
     if (!board->grid) {
         fprintf(stderr, "new_board: failed to initialize empty grid");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     board->peek_mask = calloc(rows * cols, sizeof(bool));
     if (!board->peek_mask) {
         fprintf(stderr, "new_board: failed to initialize empty peek mask");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     board->flag_mask = calloc(rows * cols, sizeof(bool));
     if (!board->flag_mask) {
         fprintf(stderr, "new_board: failed to initialize empty flag mask");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < board->rows * board->cols; i++) {
@@ -75,7 +76,7 @@ void place_mines(Board *board, int sx, int sy) {
     if (board->total_mines >= board->rows * board->cols){
         fprintf(stderr, "place_mines: invalid total mines (%d) >= grid cells (%d)\n",
             board->total_mines, board->rows * board->cols);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     int placed = 0;
