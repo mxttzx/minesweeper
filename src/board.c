@@ -12,82 +12,66 @@ Board *init_board(int rows, int cols, int mines) {
     board->cols = cols;
     board->total_mines = mines;
 
-    board->grid = malloc(rows * sizeof(Cell *));
-    for (int r = 0; r < rows; r++) {
-        board->grid[r] = malloc(cols * sizeof(Cell));
-    }
-
+    board->grid = calloc(rows * cols, sizeof(Cell));
     if (!board->grid) {
         fprintf(stderr, "new_board: failed to initialize empty grid");
         exit(1);
     }
 
-    board->peek_mask = malloc(rows * sizeof(bool *));
-    for (int i = 0; i < rows; i++) {
-        board->peek_mask[i] = malloc(cols * sizeof(bool));
-    }
+    board->peek_mask = calloc(rows * cols, sizeof(bool));
     if (!board->peek_mask) {
         fprintf(stderr, "new_board: failed to initialize empty peek mask");
         exit(1);
     }
 
-    board->flag_mask = malloc(rows * sizeof(bool *));
-    for (int i = 0; i < rows; i++) {
-        board->flag_mask[i] = malloc(cols * sizeof(bool));
-    }
+    board->flag_mask = calloc(rows * cols, sizeof(bool));
     if (!board->flag_mask) {
         fprintf(stderr, "new_board: failed to initialize empty flag mask");
         exit(1);
     }
 
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        int row = i / board->cols;
+        int col = i % board->cols;
 
-    int i, j;
-    for (i = 0; i < board->rows; i++) {
-        for (j = 0; j < board->cols; j++) {
-            board->grid[i][j].x = j;
-            board->grid[i][j].y = i;
-            board->grid[i][j].is_mine = 0;
-            board->grid[i][j].is_seen = 0;
-            board->grid[i][j].is_flag = 0;
-            board->grid[i][j].neig_mines = 0;
-        }
+        board->grid[i].y = row;
+        board->grid[i].x = col;
     }
 
     return board;
 }
 
 void free_board(Board *board) {
-    for (int i = 0; i < board->rows; i++) {
-        free(board->grid[i]);
-    }
     free(board->grid);
     free(board);
 }
 
 void calc_mines(Board *board) {
-    // Can still be optimized, but good enough for now
-    for (int x = 0; x < board->rows; x++) {
-        for (int y = 0; y < board->cols; y++) {
-            if (!board->grid[x][y].is_mine) continue;
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        if (!board->grid[i].is_mine) continue;
 
-            for (int dx = -1; dx <= 1; dx++){
-                for (int dy = -1; dy <= 1; dy++) {
-                    if (dx == 0 && dy == 0) continue;
+        int x = i / board->cols;
+        int y = i % board->cols;
 
-                    int mrow = dx + x;
-                    int mcol = dy + y;
-                    if (mrow >= 0 && mrow < board->rows &&
-                        mcol >= 0 && mcol < board->cols) {
-                        if (!board->grid[mrow][mcol].is_mine)
-                            board->grid[mrow][mcol].neig_mines++; // For each mine, we increment its neighbors
-                    }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) continue;
+
+                int mrow = dx + x;
+                int mcol = dy + y;
+                int idx = mrow * board->cols + mcol;
+
+                if (mrow >= 0 && mrow < board->rows &&
+                    mcol >= 0 && mcol < board->cols &&
+                    !board->grid[idx].is_mine) {
+                        board->grid[idx].neig_mines++;
                 }
             }
         }
     }
 }
 
-void place_mines(Board *board, int safe_x, int safe_y) {
+void place_mines(Board *board, int sx, int sy) {
     if (board->total_mines <= 0) return;
     if (board->total_mines >= board->rows * board->cols){
         fprintf(stderr, "place_mines: invalid total mines (%d) >= grid cells (%d)\n",
@@ -95,17 +79,18 @@ void place_mines(Board *board, int safe_x, int safe_y) {
         exit(1);
     }
 
-    int placed_mines = 0;
-    while (placed_mines < board->total_mines) {
-        int row_mine = rand() % board->rows;
-        int col_mine = rand() % board->cols;
+    int placed = 0;
+    while (placed < board->total_mines) {
+        int mrow = rand() % board->rows;
+        int mcol = rand() % board->cols;
+        int idx = mrow * board->cols + mcol;
 
-        if (abs(row_mine - safe_x) <= 1 && abs(col_mine - safe_y) <= 1)
+        if (abs(mrow - sx) <= 1 && abs(mcol - sy) <= 1)
             continue;
 
-        if (!board->grid[row_mine][col_mine].is_mine) {
-            board->grid[row_mine][col_mine].is_mine = 1;
-            placed_mines++;
+        if (!board->grid[idx].is_mine) {
+            board->grid[idx].is_mine = 1;
+            placed++;
         }
     }
 }

@@ -20,9 +20,9 @@ typedef struct {
 } Cell;
 
 typedef struct {
-    Cell **grid;
-    bool **peek_mask;
-    bool **flag_mask;
+    Cell *grid;
+    bool *peek_mask;
+    bool *flag_mask;
     int total_mines;
     int rows;
     int cols;

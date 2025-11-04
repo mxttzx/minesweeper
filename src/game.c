@@ -2,9 +2,9 @@
 
 Board *new_game(GameState *gs, int rows, int cols, int mines) {
     Board *board = init_board(rows, cols, mines);
-    gs->game_over = 0;
-    gs->first_move = 1;
     gs->should_continue = 1;
+    gs->first_move = 1;
+    gs->game_over = 0;
     gs->peek = 0;
 
     return board;
@@ -43,53 +43,46 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 
 void toggle_peek(GameState *gs, Board *board) {
     if (!gs->peek) {
-        for (int i = 0; i < board->rows; i++) {
-            for (int j = 0; j < board->cols; j++) {
-                board->peek_mask[i][j] = !board->grid[i][j].is_seen;
-                board->flag_mask[i][j] = board->grid[i][j].is_flag;
-
-                if (board->peek_mask[i][j]) {
-                    board->grid[i][j].is_seen = 1;
-                    board->grid[i][j].is_flag = 0;
-                }
+        for (int i = 0; i < board->rows * board->cols; i++) {
+            board->peek_mask[i] = !board->grid[i].is_seen;
+            board->flag_mask[i] = board->grid[i].is_flag;
+            if (board->peek_mask[i]) {
+                board->grid[i].is_seen = 1;
+                board->grid[i].is_flag = 0;
             }
         }
         gs->peek = 1;
     } else {
-        for (int i = 0; i < board->rows; i++) {
-            for (int j = 0; j < board->cols; j++) {
-                if (board->peek_mask[i][j]) {
-                    board->grid[i][j].is_seen = 0;
-                }
-                board->grid[i][j].is_flag = board->flag_mask[i][j];
+        for (int i = 0; i < board->rows * board->cols; i++) {
+            if (board->peek_mask[i]) {
+                board->grid[i].is_seen = 0;
             }
+            board->grid[i].is_flag = board->flag_mask[i];
         }
         gs->peek = 0;
     }
 }
 
 void reveal_board(Board *board) {
-    for (int r = 0; r < board->rows; r++) {
-        for (int c = 0; c < board->cols; c++) {
-            board->grid[r][c].is_seen = 1;
-            board->grid[r][c].is_flag = 0;
-        }
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        board->grid[i].is_seen = 1;
+        board->grid[i].is_flag = 0;
     }
 }
 
 int game_won(Board *board) {
-    for (int r = 0; r < board->rows; r++) {
-        for (int c = 0; c < board->cols; c++) {
-            Cell *cell = &board->grid[r][c];
-            if (!cell->is_mine && !cell->is_seen) return 0;
-            if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
-        }
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        Cell *cell = &board->grid[i];
+        if (!cell->is_mine && !cell->is_seen) return 0;
+        if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
     }
     return 1;
 }
 
 void toggle_flag(Board *board, int row, int col) {
-    Cell *cell = &board->grid[row][col];
+    int idx = row * board->cols + col;
+    Cell *cell = &board->grid[idx];
+
     if (cell->is_seen) return;
     cell->is_flag = !cell->is_flag;
 }
@@ -108,7 +101,8 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
         gs->first_move = 0;
     }
 
-    Cell *cell = &board->grid[row][col];
+    int idx = row * board->cols + col;
+    Cell *cell = &board->grid[idx];
 
     if (cell->is_seen || cell->is_flag) return;
 
@@ -150,10 +144,8 @@ void render_cell(GameState *gs, Assets *assets, Cell *cell) {
 
 void render_game(GameState *gs, Board *board, Assets *assets) {
     SDL_RenderClear(gs->renderer);
-    for (int i = 0; i < board->rows; i++) {
-        for (int j = 0; j < board->cols; j++) {
-            render_cell(gs, assets, &board->grid[i][j]);
-        }
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        render_cell(gs, assets, &board->grid[i]);
     }
     SDL_RenderPresent(gs->renderer);
 }

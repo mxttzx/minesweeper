@@ -12,28 +12,29 @@
 
     Board *board = init_board(rows, cols, mines);
 
-    for (int i = 0; i < board->rows; i++) {
-        for (int j = 0; j < board->cols; j++) {
-            char ch;
-            if (fscanf(file, " %c", &ch) == EOF) {
-                fprintf(stderr, "load_game: encountered unexpected EOF when loading last save file: (%d,%d)\n", i, j);
-                exit(1);
-            }
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        int row = i / board->cols;
+        int col = i % board->cols;
 
-            Cell *cell = &board->grid[i][j];
-            switch (ch) {
-                case 'M': cell->is_mine = 1; break;
-                case '.': cell->is_seen = 0; break;
-                case '+': cell->is_seen = 1; break;
-                case 'F': cell->is_flag = 1; break;
-                case 'X':
-                    cell->is_mine = 1;
-                    cell->is_flag = 1;
-                    break;
-                default:
-                    fprintf(stderr, "load_game: encountered unexpected char when loading last save file: (%d, %d)\n", i, j);
-                    exit(1);
-            }
+        char ch;
+        if (fscanf(file, " %c", &ch) == EOF) {
+            fprintf(stderr, "load_game: encountered unexpected EOF when loading last save file: (%d,%d)\n", row, col);
+            exit(1);
+        }
+
+        Cell *cell = &board->grid[i];
+        switch (ch) {
+            case 'M': cell->is_mine = 1; break;
+            case '.': cell->is_seen = 0; break;
+            case '+': cell->is_seen = 1; break;
+            case 'F': cell->is_flag = 1; break;
+            case 'X':
+                cell->is_mine = 1;
+                cell->is_flag = 1;
+                break;
+            default:
+                fprintf(stderr, "load_game: encountered unexpected char when loading last save file: (%d, %d)\n", row, col);
+                exit(1);
         }
     }
 
@@ -58,21 +59,22 @@ void save_game(GameState *gs, Board *board, const char *filename) {
 
     fprintf(file, "%d %d %d\n", board->rows, board->cols, board->total_mines);
 
-    for (int i = 0; i < board->rows; i++) {
-        for (int j = 0; j < board->cols; j++) {
-            Cell *cell = &board->grid[i][j];
-            char ch;
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        int row = i / board->cols;
+        int col = i % board->cols;
 
-            if (cell->is_flag && cell->is_mine) ch = 'X';
-            else if (cell->is_flag) ch = 'F';
-            else if (cell->is_mine) ch = 'M';
-            else if (cell->is_seen) ch = '+';
-            else ch = '.';
+        Cell *cell = &board->grid[i];
+        char ch;
 
-            fputc(ch, file);
-        }
-        fputc('\n', file);
+        if (cell->is_flag && cell->is_mine) ch = 'X';
+        else if (cell->is_flag) ch = 'F';
+        else if (cell->is_mine) ch = 'M';
+        else if (cell->is_seen) ch = '+';
+        else ch = '.';
+
+        fputc(ch, file);
+
+        if (row == board->rows) fputc('\n', file);
     }
-
     fclose(file);
 }
