@@ -29,6 +29,7 @@ void update_game(GameState *gs, Board *board, InputState *input) {
         printf("Saving game to %s\n", DEFAULT_FILE);
         input->keys[SDLK_s] = 0;
     }
+
     if (input->keys[SDLK_f] && !gs->first_move) {
         toggle_peek(gs, board);
         input->keys[SDLK_f] = 0;
@@ -93,13 +94,13 @@ void toggle_flag(Board *board, int row, int col) {
     cell->is_flag = !cell->is_flag;
 }
 
-int nbounds(Board *board, int row, int col) {
+int n_bounds(Board *board, int row, int col) {
     return (row < 0 || row >= board->rows ||
             col < 0 || col >= board->cols);
 }
 
 void reveal_single(GameState *gs, Board *board, int row, int col) {
-    if (nbounds(board, row, col)) return;
+    if (n_bounds(board, row, col)) return;
 
     if (gs->first_move) {
         place_mines(board, row, col);
