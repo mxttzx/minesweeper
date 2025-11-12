@@ -42,11 +42,10 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 void reveal_mines(Board *board) {
     for (int i = 0; i < board->rows * board->cols; i++) {
         if (board->grid[i].is_mine) {
-            board->grid[i].is_seen = 1;
-        } else if (board->grid[i].is_mine) {
-            board->grid[i].is_seen = 0;
+            board->grid[i].is_seen = board->peaking;
         }
     }
+    board->peaking = !board->peaking;
 }
 
 void reveal_board(Board *board) {
