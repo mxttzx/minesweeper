@@ -21,7 +21,7 @@ typedef struct {
 
 typedef struct {
     Cell *grid;
-    int peaking;
+    int peek;
     int total_mines;
     int rows;
     int cols;
