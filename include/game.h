@@ -13,6 +13,7 @@ void update_game(GameState *gs, Board *board, InputState *input);
 void render_game(GameState *gs, Board *board, Assets *assets);
 void reveal_single(GameState *gs, Board *board, int x, int y);
 void reveal_board(Board *board);
+void reveal_mines(Board *board);
 void toggle_flag(Board *board, int x, int y);
 void toggle_peek(GameState *gs, Board *board);
 int game_won(Board *board);

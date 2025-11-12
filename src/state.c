@@ -1,4 +1,6 @@
 #include "../include/state.h"
+#include "SDL_keycode.h"
+#include "SDL_mouse.h"
 #include <stdlib.h>
 
 static int is_relevant_event(SDL_Event *event) {
@@ -10,6 +12,13 @@ static int is_relevant_event(SDL_Event *event) {
             (event->type == SDL_KEYUP) ||
             (event->type == SDL_KEYDOWN) ||
             (event->type == SDL_QUIT);
+}
+
+void reset_input(InputState *input) {
+    input->keys[SDLK_p] = 0;
+    input->keys[SDLK_s] = 0;
+    input->keys[SDL_BUTTON_LEFT] = 0;
+    input->keys[SDL_BUTTON_RIGHT] = 0;
 }
 
 void read_input(GameState *gs, InputState *input) {
@@ -24,39 +33,20 @@ void read_input(GameState *gs, InputState *input) {
                 SDL_Quit();
                 break;
 
+            // Allow only one singular key per event
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_f) {
-                    input->keys[SDLK_f] = 1;
-                }
-                if (event.key.keysym.sym == SDLK_s) {
+                if (event.key.keysym.sym == SDLK_p) {
+                    input->keys[SDLK_p] = 1;
+                } else if (event.key.keysym.sym == SDLK_s) {
                     input->keys[SDLK_s] = 1;
-                }
-                break;
-
-            case SDL_KEYUP:
-                if (event.key.keysym.sym == SDLK_f) {
-                    input->keys[SDLK_f] = 0;
-                }
-                if (event.key.keysym.sym == SDLK_s) {
-                    input->keys[SDLK_s] = 0;
                 }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     input->keys[SDL_BUTTON_LEFT] = 1;
-                }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                } else if (event.button.button == SDL_BUTTON_RIGHT) {
                     input->keys[SDL_BUTTON_RIGHT] = 1;
-                }
-                break;
-
-            case SDL_MOUSEBUTTONUP:
-                if (event.button.button == SDL_BUTTON_LEFT) {
-                    input->keys[SDL_BUTTON_LEFT] = 0;
-                }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
-                    input->keys[SDL_BUTTON_RIGHT] = 0;
                 }
                 break;
         }

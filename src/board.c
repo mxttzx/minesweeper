@@ -18,18 +18,6 @@ Board *init_board(int rows, int cols, int mines) {
         exit(EXIT_FAILURE);
     }
 
-    board->peek_mask = calloc(rows * cols, sizeof(bool));
-    if (!board->peek_mask) {
-        fprintf(stderr, "new_board: failed to initialize empty peek mask");
-        exit(EXIT_FAILURE);
-    }
-
-    board->flag_mask = calloc(rows * cols, sizeof(bool));
-    if (!board->flag_mask) {
-        fprintf(stderr, "new_board: failed to initialize empty flag mask");
-        exit(EXIT_FAILURE);
-    }
-
     for (int i = 0; i < board->rows * board->cols; i++) {
         int row = i / board->cols;
         int col = i % board->cols;

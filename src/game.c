@@ -16,50 +16,36 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 
     if (input->keys[SDL_BUTTON_RIGHT]) {
         toggle_flag(board, row, col);
-        input->keys[SDL_BUTTON_RIGHT] = 0;
     }
 
     if (input->keys[SDL_BUTTON_LEFT]) {
         reveal_single(gs, board, row, col);
-        input->keys[SDL_BUTTON_LEFT] = 0;
     }
 
     if (input->keys[SDLK_s]) {
         save_game(gs, board, DEFAULT_FILE);
         printf("Saving game to %s\n", DEFAULT_FILE);
-        input->keys[SDLK_s] = 0;
     }
 
-    if (input->keys[SDLK_f] && !gs->first_move) {
-        toggle_peek(gs, board);
-        input->keys[SDLK_f] = 0;
+    if (input->keys[SDLK_p]) {
+        reveal_mines(board);
     }
 
     if (game_won(board)) {
         SDL_SetWindowTitle(gs->window, GAME_WON);
         gs->should_continue = 0;
     }
+
+    reset_input(input);
 }
 
-void toggle_peek(GameState *gs, Board *board) {
-    if (!gs->peek) {
-        for (int i = 0; i < board->rows * board->cols; i++) {
-            board->peek_mask[i] = !board->grid[i].is_seen;
-            board->flag_mask[i] = board->grid[i].is_flag;
-            if (board->peek_mask[i]) {
-                board->grid[i].is_seen = 1;
-                board->grid[i].is_flag = 0;
-            }
+void reveal_mines(Board *board) {
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        if (board->grid[i].is_mine) {
+            board->grid[i].is_seen = 1;
+        } else if (board->grid[i].is_mine) {
+            board->grid[i].is_seen = 0;
         }
-        gs->peek = 1;
-    } else {
-        for (int i = 0; i < board->rows * board->cols; i++) {
-            if (board->peek_mask[i]) {
-                board->grid[i].is_seen = 0;
-            }
-            board->grid[i].is_flag = board->flag_mask[i];
-        }
-        gs->peek = 0;
     }
 }
 
