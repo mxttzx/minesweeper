@@ -19,7 +19,6 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_Window *window;
     int should_continue;
-    int mouse_x, mouse_y;
     int game_over;
     int first_move;
     int peek;

@@ -1,3 +1,4 @@
+#include "SDL_render.h"
 #include "include/state.h"
 #include "include/board.h"
 #include "include/game.h"
@@ -75,6 +76,12 @@ int main(int argc, char *argv[]) {
         read_input(&gs, &input);
         update_game(&gs, board, &input);
         render_game(&gs, board, &assets);
+
+        if (gs.game_over) {
+            SDL_RenderPresent(gs.renderer);
+            SDL_Delay(5000);
+            break;
+        }
     }
 
     free_assets(&assets);
