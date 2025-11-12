@@ -35,7 +35,7 @@
                 break;
             default:
                 fprintf(stderr, "load_game: encountered unexpected char when loading last save file: (%d, %d)\n", row, col);
-                exit(1);
+                exit(EXIT_FAILURE);
         }
     }
 

@@ -1,13 +1,14 @@
 #include "../include/assets.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
+#include <stdlib.h>
 
 
 static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
     SDL_Surface *surface = SDL_LoadBMP(path);
     if (!surface) {
         fprintf(stderr, "load_asset: failed to load %s: %s\n", path, SDL_GetError());
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -15,7 +16,7 @@ static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
 
     if (!texture) {
         fprintf(stderr, "load_asset: failed to create texture from %s: %s\n", path, SDL_GetError());
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return texture;
