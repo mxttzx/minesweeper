@@ -12,7 +12,7 @@ make
 ## Controls
 - Left click: Reveal a cell
 - Right click: Place or remove a flag
-- F: Toggle peek mode
+- P: Toggle peek mode
 
 ## Saving and Loading
 You can save your current game state at any time by pressing S. This will create a file called `lsave.bat` containing the current state of the board.
