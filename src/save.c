@@ -1,14 +1,22 @@
 #include "../include/save.h"
 
- Board *load_game(GameState *gs, const char *filename) {
+Board *load_game(GameState *gs, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         fprintf(stderr, "load_game: failed to read last save file\n");
         exit(EXIT_FAILURE);
     }
 
+    char line[128];
     int rows, cols, mines;
-    fscanf(file, "%d %d %d", &rows, &cols, &mines); // Read dimension header
+
+    // Read game state
+    fgets(line, sizeof(line), file);
+    sscanf(line, "%d %d %d", &gs->game_over, &gs->first_move, &gs->should_continue);
+
+    // Read board domensions
+    fgets(line, sizeof(line), file);
+    sscanf(line, "%d %d %d", &rows, &cols, &mines);
 
     Board *board = init_board(rows, cols, mines);
 
@@ -19,7 +27,7 @@
         char ch;
         if (fscanf(file, " %c", &ch) == EOF) {
             fprintf(stderr, "load_game: encountered unexpected EOF when loading last save file: (%d,%d)\n", row, col);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
 
         Cell *cell = &board->grid[i];
@@ -38,13 +46,7 @@
         }
     }
 
-    gs->should_continue = 1;
-    gs->first_move = 0;
-    gs->game_over = 0;
-    gs->peek = 0;
-
     calc_mines(board);
-
     fclose(file);
 
     return board;
@@ -57,6 +59,7 @@ void save_game(GameState *gs, Board *board, const char *filename) {
         exit(EXIT_FAILURE);
     }
 
+    fprintf(file, "%d %d %d\n", gs->game_over, gs->first_move, gs->should_continue);
     fprintf(file, "%d %d %d\n", board->rows, board->cols, board->total_mines);
 
     for (int i = 0; i < board->rows * board->cols; i++) {
