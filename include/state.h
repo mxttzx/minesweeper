@@ -31,7 +31,7 @@ typedef struct {
     int quit;
 } InputState;
 
-void init_gui(GameState *gs, InputState *input, const char *title, int w, int h);
+void init_gui(GameState *gs, const char *title, int w, int h);
 void free_gui(GameState *gs);
 
 void read_input(GameState *gs, InputState *input);
