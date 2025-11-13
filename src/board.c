@@ -1,5 +1,4 @@
 #include "../include/board.h"
-#include <stdlib.h>
 
 Board *init_board(int rows, int cols, int mines) {
     Board *board = malloc(sizeof(Board));

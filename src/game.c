@@ -72,13 +72,9 @@ void toggle_flag(Board *board, int row, int col) {
     cell->is_flag = !cell->is_flag;
 }
 
-int n_bounds(Board *board, int row, int col) {
-    return (row < 0 || row >= board->rows ||
-            col < 0 || col >= board->cols);
-}
-
 void reveal_single(GameState *gs, Board *board, int row, int col) {
-    if (n_bounds(board, row, col)) return;
+    if (row < 0 || row >= board->rows ||
+        col < 0 || col >= board->cols) return;
 
     if (gs->first_move) {
         place_mines(board, row, col);

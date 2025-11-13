@@ -1,5 +1,4 @@
 #include "../include/save.h"
-#include <stdlib.h>
 
  Board *load_game(GameState *gs, const char *filename) {
     FILE *file = fopen(filename, "r");

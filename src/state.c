@@ -1,7 +1,4 @@
 #include "../include/state.h"
-#include "SDL_keycode.h"
-#include "SDL_mouse.h"
-#include <stdlib.h>
 
 static int is_relevant_event(SDL_Event *event) {
     if (event == NULL) {
@@ -33,7 +30,7 @@ void read_input(GameState *gs, InputState *input) {
                 SDL_Quit();
                 break;
 
-            // Allow only one singular key per event
+            // Allow only one singular key press per event
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_p) {
                     input->keys[SDLK_p] = 1;

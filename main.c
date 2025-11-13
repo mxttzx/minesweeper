@@ -1,11 +1,9 @@
-#include "SDL_render.h"
 #include "include/state.h"
 #include "include/board.h"
 #include "include/game.h"
 #include "include/assets.h"
 #include "include/save.h"
 #include <argp.h>
-#include <stdlib.h>
 
 // https://stackoverflow.com/a/24479532
 const char *argp_program_version = "Minesweeper 1.0";
