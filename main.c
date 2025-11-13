@@ -13,10 +13,11 @@ static const char doc[] = "A simple minesweeper implementation";
 static const char args_doc[] = "";
 
 static struct argp_option options[] = {
-    { "rows", 'w', "ROWS", 0, "The amount of rows of the playing board" },
-    { "cols", 'h', "COLS", 0, "The amount of columns of the playing board" },
-    { "mines", 'm', "MINES", 0, "The amount of mines the playing board has" },
-    { "file", 'f', "FILE", 0, "The file from which to load an existing game" },
+    // https://sourceware.org/glibc/manual/2.42/html_node/Argp-Option-Vectors.html
+    { "rows", 'w', "ROWS", 0, "The amount of rows of the playing board", 0},
+    { "cols", 'h', "COLS", 0, "The amount of columns of the playing board", 0},
+    { "mines", 'm', "MINES", 0, "The amount of mines the playing board has", 0},
+    { "file", 'f', "FILE", 0, "The file from which to load an existing game", 0},
     { 0 }
 };
 
@@ -40,7 +41,8 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
     return 0;
 }
 
-static struct argp argp = { options, parse_opt, args_doc, doc };
+// Initialize children, helper_filter and argp_domain so the compiler stops blasting me with warnings
+static struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL};
 
 
 int main(int argc, char *argv[]) {
@@ -67,19 +69,17 @@ int main(int argc, char *argv[]) {
         board = new_game(&gs, arguments.rows, arguments.cols, arguments.mines);
     }
 
-    init_gui(&gs, &input, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);
+    init_gui(&gs, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);
     load_assets(gs.renderer, &assets);
 
     while(gs.should_continue) {
         read_input(&gs, &input);
-        update_game(&gs, board, &input);
-        render_game(&gs, board, &assets);
 
-        if (gs.game_over) {
-            SDL_RenderPresent(gs.renderer);
-            SDL_Delay(5000);
-            break;
+        if (!gs.game_over) {
+            update_game(&gs, board, &input);
         }
+
+        render_game(&gs, board, &assets);
     }
 
     free_assets(&assets);
