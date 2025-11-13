@@ -3,18 +3,20 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../include/board.h"
-#include "../include/state.h"
-#include "../include/assets.h"
-#include "../include/save.h"
+#include "board.h"
+#include "state.h"
+#include "assets.h"
+#include "save.h"
+#include "temp.h"
 
 Board *new_game(GameState *gs, int rows, int cols, int mines);
 void update_game(GameState *gs, Board *board, InputState *input);
 void render_game(GameState *gs, Board *board, Assets *assets);
 void reveal_single(GameState *gs, Board *board, int x, int y);
 void reveal_board(Board *board);
-void reveal_mines(Board *board);
 void toggle_flag(Board *board, int x, int y);
+void toggle_peek(GameState *gs, Board *board);
+void game_lost(Cell *cell);
 int game_won(Board *board);
 
 
