@@ -1,4 +1,5 @@
 #include "../include/game.h"
+#include "SDL_render.h"
 
 Board *new_game(GameState *gs, int rows, int cols, int mines) {
     Board *board = init_board(rows, cols, mines);
@@ -28,24 +29,38 @@ void update_game(GameState *gs, Board *board, InputState *input) {
     }
 
     if (input->keys[SDLK_p]) {
-        reveal_mines(board);
+        toggle_peek(gs, board);
     }
 
     if (game_won(board)) {
         SDL_SetWindowTitle(gs->window, GAME_WON);
+        reveal_board(board);
         gs->game_over = 1;
     }
 
     reset_input(input);
 }
 
-void reveal_mines(Board *board) {
-    for (int i = 0; i < board->rows * board->cols; i++) {
-        if (board->grid[i].is_mine) {
-            board->grid[i].is_seen = board->peek;
+void toggle_peek(GameState *gs, Board *board) {
+    if (!gs->peek) {
+        for (int i = 0; i < board->rows * board->cols; i++) {
+            board->peek_mask[i] = !board->grid[i].is_seen;
+            board->flag_mask[i] = board->grid[i].is_flag;
+            if (board->peek_mask[i]) {
+                board->grid[i].is_seen = 1;
+                board->grid[i].is_flag = 0;
+            }
         }
+        gs->peek = 1;
+    } else {
+        for (int i = 0; i < board->cols * board->rows; i++) {
+            if (board->peek_mask[i]) {
+                board->grid[i].is_seen = 0;
+            }
+            board->grid[i].is_flag = board->flag_mask[i];
+        }
+        gs->peek = 0;
     }
-    board->peek = !board->peek;
 }
 
 void reveal_board(Board *board) {
@@ -53,15 +68,6 @@ void reveal_board(Board *board) {
         board->grid[i].is_seen = 1;
         board->grid[i].is_flag = 0;
     }
-}
-
-int game_won(Board *board) {
-    for (int i = 0; i < board->rows * board->cols; i++) {
-        Cell *cell = &board->grid[i];
-        if (!cell->is_mine && !cell->is_seen) return 0;
-        if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
-    }
-    return 1;
 }
 
 void toggle_flag(Board *board, int row, int col) {
@@ -89,6 +95,7 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
 
     if (cell->is_mine) {
         SDL_SetWindowTitle(gs->window, GAME_LOST);
+        game_lost(cell);
         reveal_board(board);
         gs->game_over = 1;
         return;
@@ -107,6 +114,76 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
             }
         }
     }
+}
+
+unsigned int handle_win(unsigned int s, void *param) {
+    TempWin *temp = (TempWin *)param;
+
+    for (int i = 0; i < temp->amount; i++) {
+        Cell *cell = temp->cells[i];
+        cell->is_seen = !cell->is_seen;
+    }
+
+    temp->count--;
+
+    if (temp->count <= 0) {
+        temp->done = 1;
+        free(temp->cells);
+        free(temp);
+        return 0;
+    }
+    return s;
+}
+
+int game_won(Board *board) {
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        Cell *cell = &board->grid[i];
+        if (!cell->is_mine && !cell->is_seen) return 0;
+        if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
+    }
+
+    Cell **mines = malloc(board->total_mines * sizeof(Cell *));
+
+    int count = 0;
+    for (int i = 0; i < board->rows * board->cols; i++) {
+        if (board->grid[i].is_mine) {
+            mines[count++] = &board->grid[i];
+        }
+    }
+
+    TempWin *t = malloc(board->total_mines * sizeof(TempWin));
+    t->cells = mines;
+    t->amount = board->total_mines;
+    t->done = 0;
+    t->count = 6;
+
+    SDL_AddTimer(500, handle_win, t);
+    return 1;
+}
+
+// flicker_cell + animate_loss: https://www.studyplan.dev/sdl2/sdl2-timers
+unsigned int handle_loss(unsigned int s, void* param) {
+    TempLoss *temp = (TempLoss *)param;
+    Cell *cell = temp->cell;
+
+    cell->is_seen = !cell->is_seen;
+    temp->count--;
+
+    if (temp->count <= 0) {
+        temp->done = 1;
+        free(temp);
+        return 0;
+    }
+    return s;
+}
+
+void game_lost(Cell *cell) {
+    TempLoss *t = malloc(sizeof(TempLoss));
+    t->cell = cell;
+    t->done = 0;
+    t->count = 6; // Set to even so it ends up as mine bmp when finished
+
+    SDL_AddTimer(500, handle_loss, t);
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {

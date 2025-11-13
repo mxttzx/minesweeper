@@ -1,4 +1,5 @@
 #include "../include/board.h"
+#include <stdlib.h>
 
 Board *init_board(int rows, int cols, int mines) {
     Board *board = malloc(sizeof(Board));
@@ -13,7 +14,19 @@ Board *init_board(int rows, int cols, int mines) {
 
     board->grid = calloc(rows * cols, sizeof(Cell));
     if (!board->grid) {
-        fprintf(stderr, "new_board: failed to initialize empty grid");
+        fprintf(stderr, "new_board: failed to initialize empty grid\n");
+        exit(EXIT_FAILURE);
+    }
+
+    board->peek_mask = calloc(rows * cols, sizeof(bool));
+    if (!board->peek_mask) {
+        fprintf(stderr, "new_board: failed to intitialize empty peek mask\n");
+        exit(EXIT_FAILURE);
+    }
+
+    board->flag_mask = calloc(rows * cols, sizeof(bool));
+    if (!board->flag_mask) {
+        fprintf(stderr, "new_board: failed to initialize empty flag mask\n");
         exit(EXIT_FAILURE);
     }
 

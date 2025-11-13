@@ -21,11 +21,13 @@ typedef struct {
 
 typedef struct {
     Cell *grid;
-    int peek;
+    bool *peek_mask;
+    bool *flag_mask;
     int total_mines;
     int rows;
     int cols;
 } Board;
+
 
 Board *init_board(int rows, int cols, int mines);
 void free_board(Board *board);
