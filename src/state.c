@@ -51,8 +51,8 @@ void read_input(GameState *gs, InputState *input) {
     SDL_GetMouseState(&input->mouse_x, &input->mouse_y);
 }
 
-void init_gui(GameState *gs, InputState *input, const char *title, int w, int h) {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+void init_gui(GameState *gs, const char *title, int w, int h) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
         fprintf(stderr, "init_gui: failed to initialize SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
