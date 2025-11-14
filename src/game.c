@@ -28,7 +28,7 @@ void update_game(GameState *gs, Board *board, InputState *input) {
         printf("Saving game to %s\n", DEFAULT_FILE);
     }
 
-    if (input->keys[SDLK_p]) {
+    if (input->keys[SDLK_p] && !gs->first_move) {
         toggle_peek(gs, board);
     }
 
