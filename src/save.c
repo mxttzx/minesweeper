@@ -11,12 +11,14 @@ Board *load_game(GameState *gs, const char *filename) {
     int rows, cols, mines;
 
     // Read game state
-    fgets(line, sizeof(line), file);
-    sscanf(line, "%d %d %d", &gs->game_over, &gs->first_move, &gs->should_continue);
+    if (!fgets(line, sizeof(line), file)) {
+        sscanf(line, "%d %d %d", &gs->game_over, &gs->first_move, &gs->should_continue);
+    }
 
     // Read board domensions
-    fgets(line, sizeof(line), file);
-    sscanf(line, "%d %d %d", &rows, &cols, &mines);
+    if (!fgets(line, sizeof(line), file)) {
+        sscanf(line, "%d %d %d", &rows, &cols, &mines);
+    }
 
     Board *board = init_board(rows, cols, mines);
 

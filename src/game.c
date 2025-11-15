@@ -1,5 +1,4 @@
 #include "../include/game.h"
-#include "SDL_render.h"
 
 Board *new_game(GameState *gs, int rows, int cols, int mines) {
     Board *board = init_board(rows, cols, mines);
