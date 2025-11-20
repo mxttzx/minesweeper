@@ -23,7 +23,8 @@ typedef struct {
     Cell *grid;
     bool *peek_mask;
     bool *flag_mask;
-    int total_mines;
+    int mines;
+    int flags;
     int rows;
     int cols;
 } Board;

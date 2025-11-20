@@ -70,10 +70,13 @@ void reveal_board(Board *board) {
 }
 
 void toggle_flag(Board *board, int row, int col) {
+    if (board->flags <= 0) return;
+
     int idx = row * board->cols + col;
     Cell *cell = &board->grid[idx];
 
     if (cell->is_seen) return;
+    cell->is_flag ? board->flags++ : board->flags--;
     cell->is_flag = !cell->is_flag;
 }
 
@@ -141,7 +144,7 @@ int game_won(Board *board) {
         if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
     }
 
-    Cell **mines = malloc(board->total_mines * sizeof(Cell *));
+    Cell **mines = malloc(board->mines * sizeof(Cell *));
 
     int count = 0;
     for (int i = 0; i < board->rows * board->cols; i++) {
@@ -150,9 +153,9 @@ int game_won(Board *board) {
         }
     }
 
-    TempWin *t = malloc(board->total_mines * sizeof(TempWin));
+    TempWin *t = malloc(board->mines * sizeof(TempWin));
     t->cells = mines;
-    t->amount = board->total_mines;
+    t->amount = board->mines;
     t->done = 0;
     t->count = 6;
 

@@ -10,7 +10,8 @@ Board *init_board(int rows, int cols, int mines) {
 
     board->rows = rows;
     board->cols = cols;
-    board->total_mines = mines;
+    board->mines = mines;
+    board->flags = mines;
 
     board->grid = calloc(rows * cols, sizeof(Cell));
     if (!board->grid) {
@@ -72,15 +73,15 @@ void calc_mines(Board *board) {
 }
 
 void place_mines(Board *board, int sx, int sy) {
-    if (board->total_mines <= 0) return;
-    if (board->total_mines >= board->rows * board->cols){
+    if (board->mines <= 0) return;
+    if (board->mines >= board->rows * board->cols){
         fprintf(stderr, "place_mines: invalid total mines (%d) >= grid cells (%d)\n",
-            board->total_mines, board->rows * board->cols);
+            board->mines, board->rows * board->cols);
         exit(EXIT_FAILURE);
     }
 
     int placed = 0;
-    while (placed < board->total_mines) {
+    while (placed < board->mines) {
         int mrow = rand() % board->rows;
         int mcol = rand() % board->cols;
         int idx = mrow * board->cols + mcol;

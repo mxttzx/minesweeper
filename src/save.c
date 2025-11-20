@@ -62,7 +62,7 @@ void save_game(GameState *gs, Board *board, const char *filename) {
     }
 
     fprintf(file, "%d %d %d\n", gs->game_over, gs->first_move, gs->should_continue);
-    fprintf(file, "%d %d %d\n", board->rows, board->cols, board->total_mines);
+    fprintf(file, "%d %d %d\n", board->rows, board->cols, board->mines);
 
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
