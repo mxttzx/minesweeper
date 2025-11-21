@@ -11,7 +11,7 @@ Board *init_board(int rows, int cols, int mines) {
     board->rows = rows;
     board->cols = cols;
     board->mines = mines;
-    board->flags = mines;
+    board->flags = mines; // Equal amount of flags as mines
 
     board->grid = calloc(rows * cols, sizeof(Cell));
     if (!board->grid) {
@@ -48,6 +48,7 @@ void free_board(Board *board) {
 }
 
 void calc_mines(Board *board) {
+    // Iterate over each mine and increment their neighbors
     for (int i = 0; i < board->rows * board->cols; i++) {
         if (!board->grid[i].is_mine) continue;
 
@@ -86,6 +87,7 @@ void place_mines(Board *board, int sx, int sy) {
         int mcol = rand() % board->cols;
         int idx = mrow * board->cols + mcol;
 
+        // Check if given cell is safe
         if (abs(mrow - sx) <= 1 && abs(mcol - sy) <= 1)
             continue;
 

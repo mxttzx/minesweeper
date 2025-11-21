@@ -50,7 +50,6 @@ void toggle_peek(GameState *gs, Board *board) {
                 board->grid[i].is_flag = 0;
             }
         }
-        gs->peek = 1;
     } else {
         for (int i = 0; i < board->cols * board->rows; i++) {
             if (board->peek_mask[i]) {
@@ -58,8 +57,8 @@ void toggle_peek(GameState *gs, Board *board) {
             }
             board->grid[i].is_flag = board->flag_mask[i];
         }
-        gs->peek = 0;
     }
+    gs->peek = !gs->peek;
 }
 
 void reveal_board(Board *board) {
@@ -70,14 +69,22 @@ void reveal_board(Board *board) {
 }
 
 void toggle_flag(Board *board, int row, int col) {
-    if (board->flags <= 0) return;
+    if (row < 0 || row >= board->rows ||
+        col < 0 || col >= board->cols) return;
 
     int idx = row * board->cols + col;
     Cell *cell = &board->grid[idx];
 
     if (cell->is_seen) return;
-    cell->is_flag ? board->flags++ : board->flags--;
-    cell->is_flag = !cell->is_flag;
+
+    if (cell->is_flag) {
+        cell->is_flag = 0;
+        board->flags++;
+    } else {
+        if (board->flags == 0) return;
+        cell->is_flag = 1;
+        board->flags--;
+    }
 }
 
 void reveal_single(GameState *gs, Board *board, int row, int col) {
