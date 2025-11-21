@@ -145,11 +145,14 @@ unsigned int handle_win(unsigned int s, void *param) {
 }
 
 int game_won(Board *board) {
+    int cnt = 0;
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
-        if (!cell->is_mine && !cell->is_seen) return 0;
-        if (cell->is_mine && !cell->is_flag && cell->is_seen) return 0;
+        if (!cell->is_mine && cell->is_flag) return 0;
+        if (cell->is_mine && cell->is_flag) cnt++;
     }
+
+    if (cnt != board->mines) return 0;
 
     Cell **mines = malloc(board->mines * sizeof(Cell *));
 
@@ -160,7 +163,7 @@ int game_won(Board *board) {
         }
     }
 
-    TempWin *t = malloc(board->mines * sizeof(TempWin));
+    TempWin *t = malloc(sizeof(TempWin));
     t->cells = mines;
     t->amount = board->mines;
     t->done = 0;
