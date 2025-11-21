@@ -17,7 +17,8 @@ void reveal_board(Board *board);
 void toggle_flag(Board *board, int x, int y);
 void toggle_peek(GameState *gs, Board *board);
 void game_lost(Cell *cell);
-int game_won(Board *board);
+void game_won(Board *board);
+int check_win(Board *board);
 
 
 #endif

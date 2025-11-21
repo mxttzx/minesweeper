@@ -31,10 +31,12 @@ void update_game(GameState *gs, Board *board, InputState *input) {
         toggle_peek(gs, board);
     }
 
-    if (game_won(board)) {
+    if (check_win(board)) {
         SDL_SetWindowTitle(gs->window, GAME_WON);
+        game_won(board);
         reveal_board(board);
         gs->game_over = 1;
+        return;
     }
 
     reset_input(input);
@@ -144,7 +146,26 @@ unsigned int handle_win(unsigned int s, void *param) {
     return s;
 }
 
-int game_won(Board *board) {
+void game_won(Board *board) {
+    Cell **mines = malloc(board->mines * sizeof(Cell *));
+
+        int count = 0;
+        for (int i = 0; i < board->rows * board->cols; i++) {
+            if (board->grid[i].is_mine) {
+                mines[count++] = &board->grid[i];
+            }
+        }
+
+        TempWin *t = malloc(sizeof(TempWin));
+        t->cells = mines;
+        t->amount = board->mines;
+        t->done = 0;
+        t->count = 6;
+
+        SDL_AddTimer(500, handle_win, t);
+}
+
+int check_win(Board *board) {
     int cnt = 0;
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
@@ -154,22 +175,7 @@ int game_won(Board *board) {
 
     if (cnt != board->mines) return 0;
 
-    Cell **mines = malloc(board->mines * sizeof(Cell *));
 
-    int count = 0;
-    for (int i = 0; i < board->rows * board->cols; i++) {
-        if (board->grid[i].is_mine) {
-            mines[count++] = &board->grid[i];
-        }
-    }
-
-    TempWin *t = malloc(sizeof(TempWin));
-    t->cells = mines;
-    t->amount = board->mines;
-    t->done = 0;
-    t->count = 6;
-
-    SDL_AddTimer(500, handle_win, t);
     return 1;
 }
 
