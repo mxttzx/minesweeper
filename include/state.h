@@ -1,14 +1,14 @@
 #ifndef STATE_H_
 #define STATE_H_
 
-#include "SDL_error.h"
-#include "SDL_events.h"
-#include "SDL_render.h"
-#include "SDL_scancode.h"
-#include "SDL_video.h"
-#include "SDL.h"
-#include "SDL_events.h"
-#include "SDL_mouse.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_error.h"
+#include "SDL2/SDL_events.h"
+#include "SDL2/SDL_render.h"
+#include "SDL2/SDL_scancode.h"
+#include "SDL2/SDL_video.h"
+#include "SDL2/SDL_events.h"
+#include "SDL2/SDL_mouse.h"
 #include "assets.h"
 
 #define GAME_NAME "Minesweeper"

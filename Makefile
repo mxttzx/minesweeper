@@ -1,6 +1,8 @@
-https://stackoverflow.com/a/79685650
+# https://stackoverflow.com/a/79685650
 CC = gcc
-CFLAGS = -Wall -Wextra -g `sdl2-config --cflags --libs`
+COMMON = -Wall -Wextra -g
+CFLAGS = `sdl2-config --cflags`
+LDFLAGS = `sdl2-config --libs`
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -12,12 +14,12 @@ OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 all: $(OUT)
 
 $(OUT): $(OBJ)
-	$(CC) $(OBJ) $(CFLAGS) -o $(OUT)
+	$(CC) $(OBJ) $(COMMON) $(LDFLAGS) -o $(OUT)
 	@echo "Compiled minesweeper successfully."
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(COMMON) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(OBJ_DIR) $(OUT)

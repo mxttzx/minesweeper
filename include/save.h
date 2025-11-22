@@ -1,8 +1,6 @@
 #ifndef SAVE_H_
 #define SAVE_H_
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "board.h"
 #include "state.h"

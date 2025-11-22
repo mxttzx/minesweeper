@@ -1,4 +1,6 @@
 #include "../include/save.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 Board *load_game(GameState *gs, const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -11,14 +13,18 @@ Board *load_game(GameState *gs, const char *filename) {
     int rows, cols, mines;
 
     // Read game state
-    if (fgets(line, sizeof(line), file)) {
-        sscanf(line, "%d %d %d", &gs->game_over, &gs->first_move, &gs->should_continue);
+    if (!fgets(line, sizeof(line), file)) {
+        fprintf(stderr, "load_game: unable to read game state from last save file");
+        exit(EXIT_FAILURE);
     }
+    sscanf(line, "%d %d %d", &gs->game_over, &gs->first_move, &gs->should_continue);
 
     // Read board domensions
-    if (fgets(line, sizeof(line), file)) {
-        sscanf(line, "%d %d %d", &rows, &cols, &mines);
+    if (!fgets(line, sizeof(line), file)) {
+        fprintf(stderr, "load_game: unable to read board dimensions from last save file");
+        exit(EXIT_FAILURE);
     }
+    sscanf(line, "%d %d %d", &rows, &cols, &mines);
 
     Board *board = init_board(rows, cols, mines);
 

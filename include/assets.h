@@ -1,9 +1,10 @@
 #ifndef ASSETS_H_
 #define ASSETS_H_
 
-#include "SDL.h"
-#include "SDL_render.h"
-#include "SDL_surface.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_render.h"
+#include "SDL2/SDL_surface.h"
+#include <stdlib.h>
 
 #define PATH_FLAGGED "../assets/flagged.bmp";
 #define PATH_COVERED "../assets/covered.bmp";
