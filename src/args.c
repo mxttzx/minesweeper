@@ -4,6 +4,7 @@ struct variant parse_args(struct variant startup, int argc, char *argv[]) {
     int opt;
     char *arg, *endptr;
 
+    // 3c_advanced - slide 11
     while (--argc > 0 && **++argv == '-') {
         char *opts = *argv + 1;
         while((opt = *opts++) != '\0') {
