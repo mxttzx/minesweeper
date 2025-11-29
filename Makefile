@@ -1,4 +1,3 @@
-# https://stackoverflow.com/a/79685650
 CC = gcc
 COMMON = -Wall -Wextra -g
 CFLAGS = `sdl2-config --cflags`
@@ -8,6 +7,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 OUT = minesweeper
 
+# https://stackoverflow.com/a/79685650
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c') main.c
 OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
 
