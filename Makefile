@@ -7,12 +7,12 @@ OBJ_DIR = obj
 OUT = minesweeper
 
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c') main.c
-OBJ := $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC))
+OBJ := $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC))
 
 all: $(OUT)
 
 $(OUT): $(OBJ)
-	$(CC) $(OBJ) $(LDFLAGS) -o $(OUT)
+	$(CC) $(OBJ) $(LDFLAGS) -o $@
 	@echo "Compiled minesweeper successfully."
 
 $(OBJ_DIR)/%.o: %.c

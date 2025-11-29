@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 Board *load_game(GameState *gs, const char *filename) {
     printf("Loading existing game from load file: %s\n", filename);
 

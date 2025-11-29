@@ -1,5 +1,6 @@
 #include "../include/assets.h"
 
+
 static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
     SDL_Surface *surface = SDL_LoadBMP(path);
     if (!surface) {
