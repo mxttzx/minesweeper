@@ -26,6 +26,6 @@ struct variant {
     enum mode mode;
 };
 
-struct variant parse_args(struct variant startup, int argc, char *argv[]);
+void parse_args(struct variant *startup, int argc, char *argv[]);
 
 #endif

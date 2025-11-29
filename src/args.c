@@ -1,6 +1,6 @@
 #include "../include/args.h"
 
-struct variant parse_args(struct variant startup, int argc, char *argv[]) {
+void parse_args(struct variant *startup, int argc, char *argv[]) {
     int opt;
     char *arg, *endptr;
 
@@ -12,17 +12,17 @@ struct variant parse_args(struct variant startup, int argc, char *argv[]) {
             arg = *argv;
             switch (opt) {
                 case 'f':
-                    startup.args.file.path = arg;
-                    startup.mode = FILEPTR;
+                    startup->args.file.path = arg;
+                    startup->mode = FILEPTR;
                     break;
                 case 'w':
-                    startup.args.dims.cols = strtol(arg, &endptr, 10);
+                    startup->args.dims.cols = strtol(arg, &endptr, 10);
                     break;
                 case 'h':
-                    startup.args.dims.rows = strtol(arg, &endptr, 10);
+                    startup->args.dims.rows = strtol(arg, &endptr, 10);
                     break;
                 case 'm':
-                    startup.args.dims.mines = strtol(arg, &endptr, 10);
+                    startup->args.dims.mines = strtol(arg, &endptr, 10);
                     break;
                 default:
                     fprintf(stderr, "minesweeper: illegal option -%c\n", opt);
@@ -30,6 +30,4 @@ struct variant parse_args(struct variant startup, int argc, char *argv[]) {
             }
         }
     }
-
-    return startup;
 }

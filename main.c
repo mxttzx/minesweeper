@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     memset(&gs, 0, sizeof(gs));
     memset(&input, 0, sizeof(input));
 
-    startup = parse_args(startup, argc, argv);
+    parse_args(&startup, argc, argv);
 
     Board *board;
     if (startup.mode == FILEPTR) {
