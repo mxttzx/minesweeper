@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// WPO6 - poly_plus
 typedef struct file {
     char *path;
 } FromFile;

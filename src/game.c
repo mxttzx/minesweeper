@@ -47,6 +47,7 @@ void toggle_peek(GameState *gs, Board *board) {
         for (int i = 0; i < board->rows * board->cols; i++) {
             board->peek_mask[i] = !board->grid[i].is_seen;
             board->flag_mask[i] = board->grid[i].is_flag;
+
             if (board->peek_mask[i]) {
                 board->grid[i].is_seen = 1;
                 board->grid[i].is_flag = 0;
@@ -57,6 +58,7 @@ void toggle_peek(GameState *gs, Board *board) {
             if (board->peek_mask[i]) {
                 board->grid[i].is_seen = 0;
             }
+
             board->grid[i].is_flag = board->flag_mask[i];
         }
     }
