@@ -134,13 +134,10 @@ int check_win(Board *board) {
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
         if (!cell->is_mine && cell->is_flag) return 0;
-        if (cell->is_mine && cell->is_flag) cnt++;
+        if (cell->is_mine && cell->is_flag) cnt++; // Only win if all mines are flagged
     }
 
-    if (cnt != board->mines) return 0;
-
-
-    return 1;
+    return (cnt == board->mines);
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
