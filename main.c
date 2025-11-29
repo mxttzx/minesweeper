@@ -3,52 +3,21 @@
 #include "include/game.h"
 #include "include/assets.h"
 #include "include/save.h"
-#include <argp.h>
-
-// https://stackoverflow.com/a/24479532
-const char *argp_program_version = "Minesweeper 1.0";
-const char *argp_program_bug_address = "mathijs.custers@vub.be";
-
-static const char doc[] = "A simple minesweeper implementation";
-static const char args_doc[] = "";
-
-static struct argp_option options[] = {
-    // https://sourceware.org/glibc/manual/2.42/html_node/Argp-Option-Vectors.html
-    { "rows", 'w', "ROWS", 0, "The amount of rows of the playing board", 0},
-    { "cols", 'h', "COLS", 0, "The amount of columns of the playing board", 0},
-    { "mines", 'm', "MINES", 0, "The amount of mines the playing board has", 0},
-    { "file", 'f', "FILE", 0, "The file from which to load an existing game", 0},
-    { 0 }
-};
-
-struct arguments {
-    int rows;
-    int cols;
-    int mines;
-    char *file;
-};
-
-static error_t parse_opt(int key, char *arg, struct argp_state *state) {
-    struct arguments *arguments = state->input;
-    switch (key) {
-        char *endptr;
-        case 'w': arguments->rows = strtol(arg, &endptr, 10); break;
-        case 'h': arguments->cols = strtol(arg, &endptr, 10); break;
-        case 'm': arguments->mines = strtol(arg, &endptr, 10); break;
-        case 'f': arguments->file = arg; break;
-        default: return ARGP_ERR_UNKNOWN;
-    }
-    return 0;
-}
-
-// Initialize children, helper_filter and argp_domain so the compiler stops blasting me with warnings
-static struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL};
+#include "include/args.h"
 
 
 int main(int argc, char *argv[]) {
-    struct arguments arguments = { .rows = 9, .cols = 9, .mines = 9 };
+    // Default values for starting a game
+    union arguments def = {
+        .dims.cols = 9,
+        .dims.rows = 9,
+        .dims.mines = 9,
+    };
 
-    argp_parse(&argp, argc, argv, 0, 0, &arguments);
+    struct variant startup = {
+        .args = def,
+        .mode = DIMS
+    };
 
     srand((unsigned) time(NULL)); // Initialize a random seed based on int time value
 
@@ -59,14 +28,13 @@ int main(int argc, char *argv[]) {
     memset(&gs, 0, sizeof(gs));
     memset(&input, 0, sizeof(input));
 
-    Board *board;
-    if (arguments.file) {
-        printf("Loading existing game from load file: %s\n", arguments.file);
-        board = load_game(&gs, arguments.file);
+    startup = parse_args(startup, argc, argv);
 
+    Board *board;
+    if (startup.mode == FILEPTR) {
+        board = load_game(&gs, startup.args.file.path);
     } else {
-        printf("Started a new game: (%dx%d), %d mines\n", arguments.rows, arguments.cols, arguments.mines);
-        board = new_game(&gs, arguments.rows, arguments.cols, arguments.mines);
+        board = new_game(&gs, startup.args.dims.rows, startup.args.dims.cols, startup.args.dims.mines);
     }
 
     init_gui(&gs, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);

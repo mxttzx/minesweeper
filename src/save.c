@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 Board *load_game(GameState *gs, const char *filename) {
+    printf("Loading existing game from load file: %s\n", filename);
+
     FILE *file = fopen(filename, "r");
     if (!file) {
         fprintf(stderr, "load_game: failed to read last save file\n");

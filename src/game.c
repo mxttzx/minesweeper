@@ -1,6 +1,8 @@
 #include "../include/game.h"
 
 Board *new_game(GameState *gs, int rows, int cols, int mines) {
+    printf("Starting a new game: (%dx%d), %d mines\n", rows, cols, mines);
+
     Board *board = init_board(rows, cols, mines);
     gs->should_continue = 1;
     gs->first_move = 1;
@@ -32,7 +34,6 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 
     if (check_win(board)) {
         SDL_SetWindowTitle(gs->window, GAME_WON);
-        game_won(board);
         reveal_board(board);
         gs->game_over = 1;
         return;
@@ -108,7 +109,6 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
 
     if (cell->is_mine) {
         SDL_SetWindowTitle(gs->window, GAME_LOST);
-        game_lost(cell);
         reveal_board(board);
         gs->game_over = 1;
         return;
@@ -129,44 +129,6 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     }
 }
 
-unsigned int handle_win(unsigned int s, void *param) {
-    TempWin *temp = (TempWin *)param;
-
-    for (int i = 0; i < temp->amount; i++) {
-        Cell *cell = temp->cells[i];
-        cell->is_seen = !cell->is_seen;
-    }
-
-    temp->count--;
-
-    if (temp->count <= 0) {
-        temp->done = 1;
-        free(temp->cells);
-        free(temp);
-        return 0;
-    }
-    return s;
-}
-
-void game_won(Board *board) {
-    Cell **mines = malloc(board->mines * sizeof(Cell *));
-
-        int count = 0;
-        for (int i = 0; i < board->rows * board->cols; i++) {
-            if (board->grid[i].is_mine) {
-                mines[count++] = &board->grid[i];
-            }
-        }
-
-        TempWin *t = malloc(sizeof(TempWin));
-        t->cells = mines;
-        t->amount = board->mines;
-        t->done = 0;
-        t->count = 6;
-
-        SDL_AddTimer(500, handle_win, t);
-}
-
 int check_win(Board *board) {
     int cnt = 0;
     for (int i = 0; i < board->rows * board->cols; i++) {
@@ -179,31 +141,6 @@ int check_win(Board *board) {
 
 
     return 1;
-}
-
-// flicker_cell + animate_loss: https://www.studyplan.dev/sdl2/sdl2-timers
-unsigned int handle_loss(unsigned int s, void* param) {
-    TempLoss *temp = (TempLoss *)param;
-    Cell *cell = temp->cell;
-
-    cell->is_seen = !cell->is_seen;
-    temp->count--;
-
-    if (temp->count <= 0) {
-        temp->done = 1;
-        free(temp);
-        return 0;
-    }
-    return s;
-}
-
-void game_lost(Cell *cell) {
-    TempLoss *t = malloc(sizeof(TempLoss));
-    t->cell = cell;
-    t->done = 0;
-    t->count = 6; // Set to even so it ends up as mine bmp when finished
-
-    SDL_AddTimer(500, handle_loss, t);
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
