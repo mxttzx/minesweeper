@@ -24,7 +24,6 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 
     if (input->keys[SDLK_s]) {
         save_game(gs, board, DEFAULT_FILE);
-        printf("Saving game to %s\n", DEFAULT_FILE);
     }
 
     if (input->keys[SDLK_p] && !gs->first_move) {

@@ -61,6 +61,8 @@ Board *load_game(GameState *gs, const char *filename) {
 }
 
 void save_game(GameState *gs, Board *board, const char *filename) {
+    printf("Saving game to %s\n", DEFAULT_FILE);
+
     FILE *file = fopen(filename, "wb+");
     if (!file) {
         fprintf(stderr, "load_game: failed to read last save file\n");
