@@ -69,9 +69,13 @@ void reveal_board(Board *board) {
     }
 }
 
+bool in_bounds(Board *board, int row, int col) {
+    return (row >= 0 && row < board->rows &&
+            col >= 0 && col < board->cols);
+}
+
 void toggle_flag(Board *board, int row, int col) {
-    if (row < 0 || row >= board->rows ||
-        col < 0 || col >= board->cols) return;
+    if (!in_bounds(board, row, col)) return;
 
     int idx = row * board->cols + col;
     Cell *cell = &board->grid[idx];
@@ -89,8 +93,7 @@ void toggle_flag(Board *board, int row, int col) {
 }
 
 void reveal_single(GameState *gs, Board *board, int row, int col) {
-    if (row < 0 || row >= board->rows ||
-        col < 0 || col >= board->cols) return;
+    if (!in_bounds(board, row, col)) return;
 
     if (gs->first_move) {
         place_mines(board, row, col);
