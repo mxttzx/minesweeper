@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
     struct variant startup = {
         .args = def,
-        .mode = DIMS
+        .mode = MODE_DIMS
     };
 
     srand((unsigned) time(NULL)); // Initialize a random seed based on int time value
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     parse_args(&startup, argc, argv);
 
     Board *board;
-    if (startup.mode == FILEPTR) {
+    if (startup.mode == MODE_FILE) {
         board = load_game(&gs, startup.args.file.path);
     } else {
         board = new_game(&gs, startup.args.dims.rows, startup.args.dims.cols, startup.args.dims.mines);

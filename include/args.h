@@ -14,7 +14,7 @@ typedef struct dims {
 } FromDims;
 
 enum mode {
-    NONE, DIMS, FILEPTR
+    NONE, MODE_DIMS, MODE_FILE
 };
 
 union arguments {
