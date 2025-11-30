@@ -6,6 +6,8 @@ SRC_DIR = src
 OBJ_DIR = obj
 OUT = minesweeper
 
+# https://stackoverflow.com/a/79685650
+# Compile the src directory into the obj directory keeping the same file hierarchy
 SRC := $(shell find $(SRC_DIR) -type f -name '*.c') main.c
 OBJ := $(patsubst %.c, $(OBJ_DIR)/%.o, $(SRC))
 
