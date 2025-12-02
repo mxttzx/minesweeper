@@ -13,7 +13,7 @@ void parse_args(struct variant *startup, int argc, char *argv[]) {
             switch (opt) {
                 case 'f':
                     startup->args.file.path = arg;
-                    startup->mode = FILEPTR;
+                    startup->mode = MODE_FILE;
                     break;
                 case 'w':
                     startup->args.dims.cols = strtol(arg, &endptr, 10);
