@@ -49,7 +49,7 @@ void free_board(Board *board) {
 void calc_mines(Board *board) {
     // Iterate over each mine and increment their neighbors
     for (int i = 0; i < board->rows * board->cols; i++) {
-        if (!board->grid[i].is_mine) continue;
+        if (!board->grid[i].is_mine) continue; // Skip normal cells
 
         int x = i / board->cols;
         int y = i % board->cols;
@@ -86,7 +86,7 @@ void place_mines(Board *board, int sx, int sy) {
         int mcol = rand() % board->cols;
         int idx = mrow * board->cols + mcol;
 
-        // Check if given cell is safe
+        // Check if given cell is safe at (sx, sy)
         if (abs(mrow - sx) <= 1 && abs(mcol - sy) <= 1)
             continue;
 

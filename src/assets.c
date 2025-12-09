@@ -1,6 +1,6 @@
 #include "../include/assets.h"
 
-
+// Loads an asset and returns it as an SDL_Texture
 static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
     SDL_Surface *surface = SDL_LoadBMP(path);
     if (!surface) {
@@ -19,7 +19,6 @@ static SDL_Texture* load_asset(SDL_Renderer *renderer, char const *path) {
     return texture;
 }
 
-// Need to optimize, but will work for now
 void load_assets(SDL_Renderer *renderer, Assets *assets) {
     assets->flagged = load_asset(renderer, "assets/flagged.bmp");
     assets->covered = load_asset(renderer, "assets/covered.bmp");
@@ -27,7 +26,7 @@ void load_assets(SDL_Renderer *renderer, Assets *assets) {
 
     for (int i = 0; i <= 8; i++) {
         char path[64];
-        snprintf(path, sizeof(path), "./assets/%d.bmp", i);
+        snprintf(path, sizeof(path), "./assets/%d.bmp", i); // Read formatted string into buffer
         assets->numbers[i] = load_asset(renderer, path);
     }
 }

@@ -21,38 +21,37 @@ int main(int argc, char *argv[]) {
 
     srand((unsigned) time(NULL)); // Initialize a random seed based on int time value
 
-    GameState gs;
-    InputState input;
+    GameState *gs = calloc(1, sizeof(GameState));
+    InputState *input = calloc(1, sizeof(InputState));
     Assets assets;
 
-    memset(&gs, 0, sizeof(gs));
-    memset(&input, 0, sizeof(input));
-
+    // Parse startup arguments
     parse_args(&startup, argc, argv);
 
+    // Select startup mode based on parsed args
     Board *board;
     if (startup.mode == MODE_FILE) {
-        board = load_game(&gs, startup.args.file.path);
+        board = load_game(gs, startup.args.file.path);
     } else {
-        board = new_game(&gs, startup.args.dims.rows, startup.args.dims.cols, startup.args.dims.mines);
+        board = new_game(gs, startup.args.dims.rows, startup.args.dims.cols, startup.args.dims.mines);
     }
 
-    init_gui(&gs, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);
-    load_assets(gs.renderer, &assets);
+    init_gui(gs, GAME_NAME, board->cols * CELL_WIDTH, board->rows * CELL_HEIGHT);
+    load_assets(gs->renderer, &assets);
 
-    while(gs.should_continue) {
-        read_input(&gs, &input);
+    while(gs->should_continue) {
+        read_input(gs, input);
 
-        if (!gs.game_over) {
-            update_game(&gs, board, &input);
+        if (!gs->game_over) {
+            update_game(gs, board, input);
         }
 
-        render_game(&gs, board, &assets);
+        render_game(gs, board, &assets);
     }
 
     free_assets(&assets);
     free_board(board);
-    free_gui(&gs);
+    free_gui(gs);
 
     return EXIT_SUCCESS;
 }

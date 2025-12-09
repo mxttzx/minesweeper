@@ -72,8 +72,8 @@ void save_game(GameState *gs, Board *board, const char *filename) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(file, "%d %d %d\n", gs->game_over, gs->first_move, gs->should_continue);
-    fprintf(file, "%d %d %d\n", board->rows, board->cols, board->mines);
+    fprintf(file, "%d %d %d\n", gs->game_over, gs->first_move, gs->should_continue); // Write game state
+    fprintf(file, "%d %d %d\n", board->rows, board->cols, board->mines); // Write board dimensions
 
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
