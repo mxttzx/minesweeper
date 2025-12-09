@@ -43,26 +43,30 @@ void update_game(GameState *gs, Board *board, InputState *input) {
 }
 
 void toggle_peek(GameState *gs, Board *board) {
+    // If we are not peeking, we save the needed state of the current board to masks
     if (!gs->peek) {
         for (int i = 0; i < board->rows * board->cols; i++) {
+            // Save values into masks
             board->peek_mask[i] = !board->grid[i].is_seen;
             board->flag_mask[i] = board->grid[i].is_flag;
 
+            // Show all cell values ("peeking")
             if (board->peek_mask[i]) {
                 board->grid[i].is_seen = 1;
                 board->grid[i].is_flag = 0;
             }
         }
     } else {
+        // If we are peeking, we restore the state of the game
         for (int i = 0; i < board->cols * board->rows; i++) {
             if (board->peek_mask[i]) {
-                board->grid[i].is_seen = 0;
+                board->grid[i].is_seen = 0; // Stop peeking
             }
 
-            board->grid[i].is_flag = board->flag_mask[i];
+            board->grid[i].is_flag = board->flag_mask[i]; // Restore the flags
         }
     }
-    gs->peek = !gs->peek;
+    gs->peek = !gs->peek; // Switch the value on/off
 }
 
 void reveal_board(Board *board) {
@@ -98,6 +102,7 @@ void toggle_flag(Board *board, int row, int col) {
 void reveal_single(GameState *gs, Board *board, int row, int col) {
     if (!in_bounds(board, row, col)) return;
 
+    // Place mines after the first move
     if (gs->first_move) {
         place_mines(board, row, col);
         calc_mines(board);
@@ -107,8 +112,9 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     int idx = row * board->cols + col;
     Cell *cell = &board->grid[idx];
 
-    if (cell->is_seen || cell->is_flag) return;
+    if (cell->is_seen || cell->is_flag) return; // Do nothing
 
+    // Stepped on a mine
     if (cell->is_mine) {
         SDL_SetWindowTitle(gs->window, GAME_LOST);
         reveal_board(board);
@@ -131,15 +137,22 @@ void reveal_single(GameState *gs, Board *board, int row, int col) {
     }
 }
 
+// This function can be improved by not iterating over every cell for every input
+// We can keep track of the flags placed and revealed cells while playing
 int check_win(Board *board) {
-    int cnt = 0;
+    int flag = 0;
+    int seen = 0;
+
     for (int i = 0; i < board->rows * board->cols; i++) {
         Cell *cell = &board->grid[i];
         if (!cell->is_mine && cell->is_flag) return 0;
-        if (cell->is_mine && cell->is_flag) cnt++; // Only win if all mines are flagged
+        if (cell->is_mine && cell->is_flag) flag++; // Only win if all mines are flagged
+        if (cell->is_seen) seen++; // Keep track of how many cells are seen
     }
 
-    return (cnt == board->mines);
+    // If all flags are placed on mines -> win
+    // If all cells have been revealed except for mines -> win
+    return ((flag == board->mines) || (seen == (board->rows * board->cols) - board->mines));
 }
 
 void render_cell(GameState *gs, Assets *assets, Cell *cell) {
@@ -150,6 +163,7 @@ void render_cell(GameState *gs, Assets *assets, Cell *cell) {
     else if (cell->is_mine) text = assets->mine;
     else text = assets->numbers[cell->neig_mines];
 
+    // Render the cell at correct cell dimension offset
     SDL_Rect dest = {
         cell->x * CELL_WIDTH,
         cell->y * CELL_HEIGHT,
@@ -160,6 +174,7 @@ void render_cell(GameState *gs, Assets *assets, Cell *cell) {
     SDL_RenderCopy(gs->renderer, text, NULL, &dest);
 }
 
+// Renders the board
 void render_game(GameState *gs, Board *board, Assets *assets) {
     SDL_RenderClear(gs->renderer);
     for (int i = 0; i < board->rows * board->cols; i++) {
